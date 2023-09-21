@@ -1,6 +1,4 @@
-#include "box.hpp"
-#include "ast.hpp"
-#include "parser_json_to_ast.hpp"
+#include <rinha-compiler.hpp>
 
 #include <string>
 #include <string_view>
