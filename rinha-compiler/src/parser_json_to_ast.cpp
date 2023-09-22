@@ -1,10 +1,10 @@
 #include <parser_json_to_ast.hpp>
 #include <daw/json/daw_json_link.h>
 #include <variant>
-namespace json_to_ast {
-using TermMaker2 = struct TermMaker;
-using VectorTermMaker = struct _VectorTermMaker;
-}
+
+//using _BoxTermMaker = struct TermMaker;
+using BoxTermMaker = struct _BoxTermMaker;
+
 
 
 namespace daw::json {
@@ -57,7 +57,7 @@ template <>
     using type =
       json_member_list<
         json_string<"kind">, 
-        json_raw<"value", Term, json_to_ast::TermMaker2>,
+        json_raw<"value", BoxTerm, BoxTermMaker>,
         json_class<"location", Location>
       >;
   };
@@ -87,7 +87,7 @@ template <>
       json_member_list<
         json_string<"kind">,
         json_array<"parameters", Parameter>, 
-        json_raw<"value", Term, json_to_ast::TermMaker2>,
+        json_raw<"value", BoxTerm, BoxTermMaker>,
         json_class<"location", Location>
       >;
   };
@@ -97,8 +97,8 @@ template <>
     using type =
       json_member_list<
         json_string<"kind">,
-        json_raw<"callee", Term, json_to_ast::TermMaker2>,
-        json_raw<"arguments", std::vector<Term>, json_to_ast::VectorTermMaker>, 
+        json_raw<"callee", BoxTerm, BoxTermMaker>,
+        json_raw<"arguments", BoxTerm, BoxTermMaker>, 
         json_class<"location", Location>
       >;
   };
@@ -109,8 +109,8 @@ template <>
       json_member_list<
         json_string<"kind">,
         json_class<"name", Parameter>,
-        json_raw<"value", Term, json_to_ast::TermMaker2>,
-        json_raw<"next", Term, json_to_ast::TermMaker2>,
+        json_raw<"value", BoxTerm, BoxTermMaker>,
+        json_raw<"next", BoxTerm, BoxTermMaker>,
         json_class<"location", Location>
       >;
   };
@@ -120,9 +120,9 @@ template <>
     using type =
       json_member_list<
         json_string<"kind">,
-        json_raw<"lhs", Term, json_to_ast::TermMaker2>,
+        json_raw<"lhs", BoxTerm, BoxTermMaker>,
         json_string<"op">,
-        json_raw<"rhs", Term, json_to_ast::TermMaker2>,
+        json_raw<"rhs", BoxTerm, BoxTermMaker>,
         json_class<"location", Location>
       >;
   };
@@ -132,9 +132,9 @@ template <>
     using type =
       json_member_list<
         json_string<"kind">,
-        json_raw<"condition", Term, json_to_ast::TermMaker2>,
-        json_raw<"then", Term, json_to_ast::TermMaker2>,
-        json_raw<"otherwise", Term, json_to_ast::TermMaker2>,
+        json_raw<"condition", BoxTerm, BoxTermMaker>,
+        json_raw<"then", BoxTerm, BoxTermMaker>,
+        json_raw<"otherwise", BoxTerm, BoxTermMaker>,
         json_class<"location", Location>
       >;
   };
@@ -144,8 +144,8 @@ template <>
     using type =
       json_member_list<
         json_string<"kind">,
-        json_raw<"first", Term, json_to_ast::TermMaker2>,
-        json_raw<"second", Term, json_to_ast::TermMaker2>,
+        json_raw<"first", BoxTerm, BoxTermMaker>,
+        json_raw<"second", BoxTerm, BoxTermMaker>,
         json_class<"location", Location>
       >;
   };
@@ -155,7 +155,7 @@ template <>
     using type =
       json_member_list<
         json_string<"kind">, 
-        json_raw<"value", Term, json_to_ast::TermMaker2>,
+        json_raw<"value", BoxTerm, BoxTermMaker>,
         json_class<"location", Location>
       >;
   };
@@ -165,138 +165,212 @@ template <>
     using type =
       json_member_list<
         json_string<"kind">, 
-        json_raw<"value", Term, json_to_ast::TermMaker2>,
+        json_raw<"value", BoxTerm, BoxTermMaker>,
         json_class<"location", Location>
       >;
   };
 
 };
 
-namespace json_to_ast {
+
+// Term FactoryTerm(daw::json::json_value jv){
+//     using namespace daw::json;
+//     Term term;
+//     std::string kind = jv["kind"].get_string();
+//     std::cout << "FactoryTerm: " <<  kind << std::endl;
+//     if(kind == "Int")
+//       term = std::move(from_json<Int>( jv ));
+//     else if(kind == "Str")
+//       term = std::move(from_json<Str>( jv ));
+//     else if(kind == "Call")
+//       term = from_json<Call>( jv );
+//     else if(kind == "Binary")
+//       term = from_json<Binary>( jv );
+//     else if(kind == "Function")
+//       term = from_json<Function>( jv );
+//     else if(kind == "Let")
+//       term = from_json<Let>( jv );
+//     else if(kind == "If")
+//       term = from_json<If>( jv );
+//     else if(kind == "Print")
+//       term = from_json<Print>( jv );
+//     else if(kind == "First")
+//       term = from_json<First>( jv );
+//     else if(kind == "Second")
+//       term = from_json<Second>( jv );
+//     else if(kind == "Bool")
+//       term = std::move(from_json<Bool>( jv ));
+//     else if(kind == "Tuple")
+//       term = from_json<Tuple>( jv );
+//     else if(kind == "Var")
+//       term = from_json<Var>( jv );
+//     else{
+//       std::cout << "Kind Invalido TODO" << std::endl;
+//       std::terminate();
+//     }
+
+//     return term;
+// }
 
 
-struct _VectorTermMaker{
-  std::vector<Term> operator( )( char const *str, std::size_t sz )  {
-    using namespace daw::json;
-    auto json_data = daw::string_view( str, sz );
-    auto jv = json_value( daw::string_view( str, sz ) );
+struct _BoxTermMaker{
+  BoxTerm operator( )( char const *str, std::size_t sz ) const {
+      using namespace daw::json;
+      auto json_data = daw::string_view( str, sz );
+      auto jv = json_value(json_data);
+      BoxTerm boxTerm;
 
-    auto jv2 = json_value( daw::string_view( jv[0].get_string() ) );
-	(void)jv2;
-  std::vector<Term> terms;
-  Term term;
+      auto FactoryTerm = [](daw::json::json_value jv){
+                                using namespace daw::json;
+                                Term term;
+                                std::string kind = jv["kind"].get_string();
+                                std::cout << "FactoryTerm: " <<  kind << std::endl;
+                                if(kind == "Int")
+                                  term = std::move(from_json<Int>( jv ));
+                                else if(kind == "Str")
+                                  term = std::move(from_json<Str>( jv ));
+                                else if(kind == "Call")
+                                  term = from_json<Call>( jv );
+                                else if(kind == "Binary")
+                                  term = from_json<Binary>( jv );
+                                else if(kind == "Function")
+                                  term = from_json<Function>( jv );
+                                else if(kind == "Let")
+                                  term = from_json<Let>( jv );
+                                else if(kind == "If")
+                                  term = from_json<If>( jv );
+                                else if(kind == "Print")
+                                  term = from_json<Print>( jv );
+                                else if(kind == "First")
+                                  term = from_json<First>( jv );
+                                else if(kind == "Second")
+                                  term = from_json<Second>( jv );
+                                else if(kind == "Bool")
+                                  term = std::move(from_json<Bool>( jv ));
+                                else if(kind == "Tuple")
+                                  term = from_json<Tuple>( jv );
+                                else if(kind == "Var")
+                                  term = from_json<Var>( jv );
+                                else{
+                                  std::cout << "Kind Invalido TODO" << std::endl;
+                                  std::terminate();
+                                }
 
-    std::cout << json_data << std::endl;
+                                return term;
+                            };
 
-    
-    //std::cout << jv.begin().value().get_string() << std::endl;
-    std::cout << jv[0].get_string() << std::endl;
+      if(jv.is_array()){
+          boxTerm.is_vector = true;
+          //auto jv_array = json_value( daw::string_view( jv[0].get_string() ) );
+          //std::for_each(jv.begin(), jv.end(), [boxTerm](json_value jv_item) { boxTerm.terms.push_back(FactoryTerm(jv_item)); });
+          // for (auto jv_item: jv) {
+          //     boxTerm.terms.push_back(FactoryTerm(jv_item));
+          // }
+          int i = 0;
+          for (auto jv_item = jv.begin(); jv_item != jv.end(); jv_item++){
 
+              json_value x = jv.find_element(i);
+              //std::cout << x.get_string() << std::endl;
+              boxTerm.terms.push_back(FactoryTerm(x)); 
+              i++;
+          }
+            
+      }
+      else{
+          boxTerm.is_vector = false;
+          boxTerm.terms.push_back(FactoryTerm(jv));
+          
+      }
 
-
-
-    
-  std::string kind = jv2["kind"].get_string();
-  std::cout << kind << std::endl;
-  
-  if(kind == "Int")
-    term = std::move(from_json<Int>( jv2 ));
-  else if(kind == "Str")
-    term = std::move(from_json<Str>( jv2 ));
-  // else if(kind == "Call")
-  //   term = from_json<Call>( jv );
-  // else if(kind == "Binary")
-  //   term = from_json<Binary>( jv2 );
-  // else if(kind == "Function")
-  //   term = from_json<Function>( jv );
-  // else if(kind == "Let")
-  //   term = from_json<Let>( jv );
-  // else if(kind == "If")
-  //   term = from_json<If>( jv );
-  // else if(kind == "Print")
-  //   term = from_json<Print>( jv );
-  // else if(kind == "First")
-  //   term = from_json<First>( jv );
-  // else if(kind == "Second")
-  //   term = from_json<Second>( jv );
-  // else if(kind == "Bool")
-  //   term = std::move(from_json<Bool>( jv ));
-  // else if(kind == "Tuple")
-  //   term = from_json<Tuple>( jv );
-  // else if(kind == "Var")
-  //   term = from_json<Var>( jv );
-  else{
-    std::cout << "Kind Invalido TODO" << std::endl;
-    std::terminate();
+      return boxTerm;
   }
-  terms.push_back(term);
-  return terms;
+    
+    //(void)jv2;
+    // std::vector<Term> terms;
+    // Term term;
 
+    // std::cout << json_data << std::endl;
+
+      
+      //std::cout << jv.begin().value().get_string() << std::endl;
+    // std::cout << jv[0].get_string() << std::endl;
+
+
+
+
+      
     
-    //std::vector<Binary> termf = daw::json::from_json_array<Binary, std::vector<Binary>>( daw::string_view( str, sz ) );
+    //std::cout << kind << std::endl;
     
-    //std::cout << termf.size() << std::endl;
-    //std::vector<Term> term;
-    //return term;
-  }
-  // Arguments operator( )( char const *str, std::size_t sz ) const {
-   
-  //       //using namespace daw::json;
-  //       Arguments terms; //= daw::json::from_json_array<Term, std::vector<Term>, TermMaker>( daw::string_view( str, sz ) );
-  //       terms.arguments = "OI";
-  //       return terms;
-	// }
+    
+    // terms.push_back(term);
+    // return terms;
+
+      
+      //std::vector<Binary> termf = daw::json::from_json_array<Binary, std::vector<Binary>>( daw::string_view( str, sz ) );
+      
+      //std::cout << termf.size() << std::endl;
+      //std::vector<Term> term;
+      //return term;
+   // }
+    // Arguments operator( )( char const *str, std::size_t sz ) const {
+    
+    //       //using namespace daw::json;
+    //       Arguments terms; //= daw::json::from_json_array<Term, std::vector<Term>, TermMaker>( daw::string_view( str, sz ) );
+    //       terms.arguments = "OI";
+    //       return terms;
+    // }
 };
 
-struct TermMaker {
-  Term operator( )( char const *str, std::size_t sz )  {
-    //using namespace json_to_ast;
-  using namespace daw::json;
-  //using namespace 
-  //std::cout << str << std::endl;
-	auto jv = json_value( daw::string_view( str, sz ) );
-	(void)jv;
-  Term term;
-  std::string kind = jv["kind"].get_string();
-  std::cout << kind << std::endl;
+// struct TermMaker {
+//   Term operator( )( char const *str, std::size_t sz )  {
+//     //using namespace json_to_ast;
+//   using namespace daw::json;
+//   //using namespace 
+//   //std::cout << str << std::endl;
+// 	auto jv = json_value( daw::string_view( str, sz ) );
+// 	(void)jv;
+//   Term term;
+//   std::string kind = jv["kind"].get_string();
+//   std::cout << kind << std::endl;
   
-  if(kind == "Int")
-    term = std::move(from_json<Int>( jv ));
-  else if(kind == "Str")
-    term = std::move(from_json<Str>( jv ));
-  else if(kind == "Call")
-    term = from_json<Call>( jv );
-  else if(kind == "Binary")
-    term = from_json<Binary>( jv );
-  else if(kind == "Function")
-    term = from_json<Function>( jv );
-  else if(kind == "Let")
-    term = from_json<Let>( jv );
-  else if(kind == "If")
-    term = from_json<If>( jv );
-  else if(kind == "Print")
-    term = from_json<Print>( jv );
-  else if(kind == "First")
-    term = from_json<First>( jv );
-  else if(kind == "Second")
-    term = from_json<Second>( jv );
-  else if(kind == "Bool")
-    term = std::move(from_json<Bool>( jv ));
-  else if(kind == "Tuple")
-    term = from_json<Tuple>( jv );
-  else if(kind == "Var")
-    term = from_json<Var>( jv );
-  else{
-    std::cout << "Kind Invalido TODO" << std::endl;
-    std::terminate();
-  }
-  return term;	
-	}
-};
+//   if(kind == "Int")
+//     term = std::move(from_json<Int>( jv ));
+//   else if(kind == "Str")
+//     term = std::move(from_json<Str>( jv ));
+//   else if(kind == "Call")
+//     term = from_json<Call>( jv );
+//   else if(kind == "Binary")
+//     term = from_json<Binary>( jv );
+//   else if(kind == "Function")
+//     term = from_json<Function>( jv );
+//   else if(kind == "Let")
+//     term = from_json<Let>( jv );
+//   else if(kind == "If")
+//     term = from_json<If>( jv );
+//   else if(kind == "Print")
+//     term = from_json<Print>( jv );
+//   else if(kind == "First")
+//     term = from_json<First>( jv );
+//   else if(kind == "Second")
+//     term = from_json<Second>( jv );
+//   else if(kind == "Bool")
+//     term = std::move(from_json<Bool>( jv ));
+//   else if(kind == "Tuple")
+//     term = from_json<Tuple>( jv );
+//   else if(kind == "Var")
+//     term = from_json<Var>( jv );
+//   else{
+//     std::cout << "Kind Invalido TODO" << std::endl;
+//     std::terminate();
+//   }
+//   return term;	
+// 	}
+// };
 
 
 
-}
+
 
 
 namespace daw::json {
@@ -305,7 +379,7 @@ namespace daw::json {
     using type =
       json_member_list<
         json_string<"name">, 
-        json_raw<"expression", Term, json_to_ast::TermMaker>,
+        json_raw<"expression", BoxTerm, BoxTermMaker>,
         json_class<"location", Location>
       >;
   };

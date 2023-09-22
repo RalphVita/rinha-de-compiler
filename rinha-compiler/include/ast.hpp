@@ -52,13 +52,14 @@ using Term = std::variant<Int,
                           box<struct Var>
                         >;
 struct BoxTerm{
+  bool is_vector;
   std::vector<Term> terms;
 };
 
 struct Print
 {
     std::string kind{};
-    Term value;
+    BoxTerm value;
     Location location;
 };
 
@@ -78,7 +79,7 @@ struct Function
 {
     std::string kind{};
     std::vector<Parameter> parameters;
-    Term value;
+    BoxTerm value;
     Location location;
 };
 // struct Arguments{ 
@@ -88,8 +89,8 @@ struct Function
 struct Call
 {
     std::string kind{};
-    Term callee;
-    std::vector<Term> arguments;
+    BoxTerm callee;
+    BoxTerm arguments;
     Location location;
 };
 
@@ -97,52 +98,52 @@ struct Let
 {
     std::string kind{};
     Parameter name;
-    Term value;
-    Term next;
+    BoxTerm value;
+    BoxTerm next;
     Location location;
 };
 
 struct Binary {
   std::string kind{};
-  Term lhs;
+  BoxTerm lhs;
   std::string op{};
-  Term rhs;
+  BoxTerm rhs;
   Location location;
 };
 
 struct If {
   std::string kind{};
-  Term condition;
-  Term then;
-  Term otherwise;
+  BoxTerm condition;
+  BoxTerm then;
+  BoxTerm otherwise;
   Location location;
 };
 
 struct Tuple {
   std::string kind{};
-  Term first;
-  Term second;
+  BoxTerm first;
+  BoxTerm second;
   Location location;
 };
 
 struct First
 {
     std::string kind{};
-    Term value;
+    BoxTerm value;
     Location location;
 };
 
 struct Second
 {
     std::string kind{};
-    Term value;
+    BoxTerm value;
     Location location;
 };
 
 
 struct File{
   std::string name{};
-  Term expression;
+  BoxTerm expression;
   Location location;
 };
 
