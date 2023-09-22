@@ -51,6 +51,9 @@ using Term = std::variant<Int,
                           box<struct Tuple>,
                           box<struct Var>
                         >;
+struct BoxTerm{
+  std::vector<Term> terms;
+};
 
 struct Print
 {
@@ -78,7 +81,10 @@ struct Function
     Term value;
     Location location;
 };
-
+// struct Arguments{ 
+//   //std::vector<Term> arguments;
+//   std::string arguments{};
+//   };
 struct Call
 {
     std::string kind{};
