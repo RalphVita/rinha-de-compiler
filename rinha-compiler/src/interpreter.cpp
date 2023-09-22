@@ -3,13 +3,16 @@
 #include <variant>
 #include <string>
 #include <walker.hpp>
-std::string x;
+#include <stack.hpp>
+
+stack _stack;
+
+
 void run_int(Int& term){
     //return term.value;
 }
 void run_str(Str& term){
-    //return term.value;
-    x = term.value;
+    _stack.push(term.value);
 }
 void run_call(box<Call>& term){
     //return 0;
@@ -29,8 +32,8 @@ void run_if(box<If>& term){
 
 void run_print(box<Print>& term){
     std::visit(walker::VisitTerm{}, term->value.terms.front());
-    std::cout << x << std::endl;
-    //std::visit([](const auto &x) { std::cout << x << std::endl; }, value);
+    //std::cout << _stack.pop() << std::endl;
+    std::visit([](const auto &x) { std::cout << x << std::endl; }, _stack.pop());
     //return value;
     ////return 0;
 }
