@@ -4,7 +4,7 @@
 #include <iostream>
 #include <typeinfo>
 #include <map>
-#include "box.hpp"
+#include <box.hpp>
 #include <variant>
 
 #ifndef AST_HPP

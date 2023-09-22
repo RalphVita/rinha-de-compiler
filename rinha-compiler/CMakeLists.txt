@@ -7,6 +7,7 @@ include_directories(include)
 
 file(GLOB sources "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 add_library(${PROJECT_NAME} SHARED ${sources})
+target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 #add_executable(rinha-compiler ${sources})
 
 # add_library(rinha2 SHARED "${CMAKE_CURRENT_SOURCE_DIR}/src/parser_json_to_ast.cpp")
