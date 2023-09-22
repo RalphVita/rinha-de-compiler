@@ -6,10 +6,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
 
 #find_package( daw-json-link )
+include(CTest)
+enable_testing()
 
-# enable_testing()
-
-# add_subdirectory(tests)
+add_subdirectory(tests)
 
 include_directories(rinha-compiler)
 add_subdirectory(rinha-compiler)

@@ -12,16 +12,7 @@
 
 
 
-using Type = std::variant<int, bool, std::string>;
 
-struct VisitTerm {
-    Type operator()(box<Print>& term){ 
-      Type value = std::visit(*this, term->value);
-      std::visit([](const auto &x) { std::cout << x << std::endl; }, value);
-      return value;
-    }
-    Type operator()(Str& term)       { return term.value;}
-};
 
 int main() {
     std::string_view test_001_t_json_data = R"({
@@ -54,5 +45,6 @@ int main() {
     
     File file = json_to_ast::parser(test_001_t_json_data);
 
-    std::visit(VisitTerm{}, file.expression);
+    interpreter::walk(file);
+    
 }

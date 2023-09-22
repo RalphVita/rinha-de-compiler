@@ -1,38 +1,28 @@
-#include <gtest/gtest.h>
-#include <string.h>
-#include "ast.hpp"
-#include "parser_json_to_ast.hpp"
+#include <iostream>
+#include <string>
 #include <daw/daw_read_file.h>
-#include <filesystem>
+#include <rinha-compiler.hpp>
 
-// namespace {
-// std::string_view GetData(const std::string& path)
-// {
+int test_parser_json_print(std::string);
 
+int main(int argc, char **argv ){
 
+    std::string test_name = argv[1];
+    std::cout << test_name << std::endl;
 
-//     auto data = daw::read_file( path );
-// 	//auto json_data = std::string_view( data.data( ), data.size( ) );
-
-//     std::filesystem::path cwd = std::filesystem::current_path();
-//     std::cout << "Current directory path: " << cwd << std::endl;
-//     std::cout << "Current file path: " << __FILE__ << std::endl;
-
+    if(test_name == "test_parser_json_print"){
+        std::string path = argv[2];
+        return test_parser_json_print(path);
+    }
     
-//     return data;
-// }
-// }
-//INSTANTIATE_TEST_SUITE_P(Json, test_parser_json, GetTests("test_data/print.json"));
+    return 1;
+}
 
-TEST(test_parser_json, test_parser_json_print)
-{
-    //std::string_view test_001_t_json_data = GetData("./tests/test_data/print.json");
-    auto test_001_t_json_data = *daw::read_file( "./tests/test_data/print.json" );
-    std::cout << test_001_t_json_data << std::endl;
+int test_parser_json_print(std::string path) {
+    auto json_data = *daw::read_file( path );
+    File file = json_to_ast::parser(json_data);
+    
+    int check_kind = std::holds_alternative<box<struct Print>>(file.expression) ? 0 : 1;
 
-    
-    File file = json_to_ast::parser(test_001_t_json_data);
-    
- 
-    ASSERT_EQ(21, file.location.end);
+    return check_kind;
 }

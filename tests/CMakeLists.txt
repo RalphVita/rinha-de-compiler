@@ -1,7 +1,19 @@
-#cmake_minimum_required(VERSION 3.22.1)
+cmake_minimum_required(VERSION 3.22.1)
 
-# #project(rinha-test "CXX")
+#project(rinha-compiler-test "CXX")
 
+
+#include_directories(rinha-compiler)
+#include_directories(rinha-compiler/include)
+#add_subdirectory(rinha-compiler)
+
+#enable_testing()
+
+add_executable(parser_json_to_ast_test src/parser_json_to_ast_test.cpp )
+target_include_directories(parser_json_to_ast_test PUBLIC "${CMAKE_SOURCE_DIR}/rinha-compiler")
+#target_link_libraries(parser_json_to_ast_test rinha-compiler)
+target_link_libraries(parser_json_to_ast_test PUBLIC rinha-compiler )
+add_test(NAME test_parser_json_print COMMAND parser_json_to_ast_test "test_parser_json_print" "${CMAKE_SOURCE_DIR}/tests/test_data/print.json")
 
 
 # # set(CMAKE_CXX_STANDARD 20)
