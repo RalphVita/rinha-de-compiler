@@ -82,10 +82,7 @@ struct Function
     BoxTerm value;
     Location location;
 };
-// struct Arguments{ 
-//   //std::vector<Term> arguments;
-//   std::string arguments{};
-//   };
+
 struct Call
 {
     std::string kind{};
