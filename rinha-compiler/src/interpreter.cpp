@@ -1,3 +1,4 @@
+#include <symbol.hpp>
 #include <interpreter.hpp>
 #include <tuple>
 #include <variant>
