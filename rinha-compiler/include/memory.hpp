@@ -18,7 +18,8 @@ namespace rinha_compiler{
         void store(int scope, int addr, Type value);
         Type load(int scope, int addr);
     public:
-        Memory(int size);
+        Memory();
+        void init(int size);
         void store(Symbol symbol, Type value);
         Type load(Symbol symbol);
         void push(int scope);
@@ -26,7 +27,8 @@ namespace rinha_compiler{
         ~Memory();
     };
 
-    Memory::Memory(int size)
+    Memory::Memory(){}
+    void Memory::init(int size)
     {
         men.reserve(size);
     }

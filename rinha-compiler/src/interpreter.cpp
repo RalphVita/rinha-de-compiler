@@ -7,12 +7,16 @@
 #include <box.hpp>
 #include <ast.hpp>
 #include <memory.hpp>
+#include <symbol_table.hpp>
 
 using Type = std::variant<int, bool, std::string>;
 
 
 stack _stack;
-rinha_compiler::Memory _memory;
+rinha_compiler::Memory _memory = rinha_compiler::Memory();
+std::unique_ptr<rinha_compiler::SymbolTable> symbolTable;// = std::move(rinha_compiler::SymbolTable());
+int current_scope;
+
 
 void bin_op(box<Binary>& term){
     std::visit(walker::VisitTerm{}, term->lhs.terms.front());
@@ -186,7 +190,10 @@ box<Let> find_func_decl(std::string function_name){
 void load_paran_list(box<Function>& function){
     for (auto parameter = function->parameters.rend(); parameter != function->parameters.rbegin(); --parameter){
         Type value = _stack.pop();
-        rinha_compiler::Symbol symbol; //TODO pegar na tabela de simbolos.
+        std::string id = parameter->text;
+        rinha_compiler::Symbol symbol(id, current_scope, 0);
+        
+        symbolTable->Put(id, symbol);
 
         _memory.store(symbol, value);
     }
@@ -194,14 +201,12 @@ void load_paran_list(box<Function>& function){
 
 void run_call(box<Call>& term){
     int arity = term->arguments.terms.size();
+    int saved_scope = current_scope;
     if(arity > 0){
         //Carrega argumentos na pilha
         for(auto arg: term->arguments.terms)
             std::visit(walker::VisitTerm{}, arg);
     }
-
-    rinha_compiler::Symbol symbol;//TODO: Pegar da tabela de symbolos
-    _memory.push(symbol.scope);
 
     //Recupera nome da função
     std::visit(walker::VisitTerm{}, term->callee.terms.front());
@@ -209,13 +214,19 @@ void run_call(box<Call>& term){
     if(!std::holds_alternative<std::string>(function_name))
         throw 555;
     
+    std::string id = std::get<std::string>(function_name);
+    rinha_compiler::Symbol symbol = symbolTable->Get(id);
+    current_scope = symbol.scope;
+    _memory.push(symbol.scope);
+    
     //Busca e Aponta para o bloco da função na AST
-    box<Let> let_function = find_func_decl(std::get<std::string>(function_name));
+    box<Let> let_function = find_func_decl(id);
 
     //Varre a o bloco da função recursivamente
     std::visit(walker::VisitTerm{}, let_function->value.terms.front());
 
     _memory.pop(symbol.scope);
+    current_scope = saved_scope;
 }
 void run_binary(box<Binary>& term){
     
@@ -266,21 +277,39 @@ void run_binary(box<Binary>& term){
     }
 }
 void run_function(box<Function>& term){
+    auto symbol_table_function = std::unique_ptr<rinha_compiler::SymbolTable>(new rinha_compiler::SymbolTable(symbolTable));
     load_paran_list(term);
 
     std::visit(walker::VisitTerm{}, term->value.terms.front());
-}
-void run_let(box<Let>& term){
-    std::string id = term->name.text;
-    rinha_compiler::Symbol symbol;//TODO: Criar na tabela de simbolos
 
+    symbolTable = symbol_table_function->GetParent();
+}
+
+void run_function_decl(box<Let>& term){
+    std::string id = term->name.text;
     Term value = term->value.terms.front();
-    if(std::holds_alternative<Function>(value)){
-        //TODO: Adiciona na tabela de symbolos
+    current_scope++;
+
+    rinha_compiler::Symbol symbol(id, current_scope, 0);
+    symbolTable->Put(id, symbol);
+
+    current_scope--;
+}
+
+void run_let(box<Let>& term){
+    Term value = term->value.terms.front();
+    if(std::holds_alternative<box<Function>>(value)){
+        run_function_decl(term);
     }
     else {
+        std::string id = term->name.text;
+        rinha_compiler::Symbol symbol(id, current_scope, 0);
+
+        symbolTable->Put(id, symbol);
+
         std::visit(walker::VisitTerm{}, value);
         Type result = _stack.pop();
+
         _memory.store(symbol, result);
     }
 
@@ -326,15 +355,20 @@ void run_tuple(box<Tuple>& term){
     std::visit(walker::VisitTerm{}, term->first.terms.front());
     std::visit(walker::VisitTerm{}, term->second.terms.front());
 }
+
+//Usando uma váriavel
 void run_var(box<Var>& term){
-    rinha_compiler::Symbol symbol;//TODO: Pegar da tabela de symbolos
+    std::string id = term->text;
+    rinha_compiler::Symbol symbol = symbolTable->Get(id);
     Type value = _memory.load(symbol);
 
     _stack.push(value);
 }
 namespace interpreter {
     void walk(File file){
-        _memory = rinha_compiler::Memory(10);
+        _memory.init(10);
+        current_scope = 0;
+        symbolTable = std::unique_ptr<rinha_compiler::SymbolTable>(new rinha_compiler::SymbolTable());
         std::visit(walker::VisitTerm{}, file.expression.terms.front());
     }
 }
