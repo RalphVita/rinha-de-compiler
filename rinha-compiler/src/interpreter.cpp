@@ -4,6 +4,8 @@
 #include <string>
 #include <walker.hpp>
 #include <stack.hpp>
+#include <box.hpp>
+#include<ast.hpp>
 
 template<class... Ts> struct overload : Ts... { using Ts::operator()...; };
 template<class... Ts> overload(Ts...) -> overload<Ts...>; // line not needed in C++20...
@@ -172,8 +174,41 @@ void run_int(Int& term){
 void run_str(Str& term){
     _stack.push(term.value);
 }
+
+box<Let> find_func_decl(std::string function_name){
+    Let y;
+    box<Let> x = std::move(y);//TODO
+    return x;
+}
+
+void load_paran_list(box<Function>& function){
+    for (auto parameter = function->parameters.rend(); parameter != function->parameters.rbegin(); --parameter){
+        Type value = _stack.pop();
+        //TODO: Armarzenar num frame de memória
+    }
+}
+
 void run_call(box<Call>& term){
+    int arity = term->arguments.terms.size();
+    if(arity > 0){
+        //Carrega argumentos na pilha
+        for(auto arg: term->arguments.terms)
+            std::visit(walker::VisitTerm{}, arg);
+    }
+
+    //TODO: Criar no frame de memória
+
+    //Recupera nome da função
+    std::visit(walker::VisitTerm{}, term->callee.terms.front());
+    Type function_name = _stack.pop();
+    if(!std::holds_alternative<std::string>(function_name))
+        throw 555;
     
+    //Busca e Aponta para o bloco da função na AST
+    box<Let> let_function = find_func_decl(std::get<std::string>(function_name));
+
+    //Varre a o bloco da função recursivamente
+    std::visit(walker::VisitTerm{}, let_function->value.terms.front());
 }
 void run_binary(box<Binary>& term){
     
@@ -224,7 +259,9 @@ void run_binary(box<Binary>& term){
     }
 }
 void run_function(box<Function>& term){
-    
+    load_paran_list(term);
+
+    std::visit(walker::VisitTerm{}, term->value.terms.front());
 }
 void run_let(box<Let>& term){
     //return 0;
