@@ -31,12 +31,13 @@ namespace rinha_compiler{
         throw 555;
     }
 
-    void SymbolTable::Put(std::string id, Symbol simbol){
+    Symbol SymbolTable::Put(std::string id, Symbol simbol){
         if(!table.contains(id))
         {
             simbol.index = size++;
             table.insert({id, simbol});
         }
+        return Get(id);
     }
 
     SymbolTable* SymbolTable::GetParent(){

@@ -19,7 +19,7 @@ namespace rinha_compiler{
     public:
         SymbolTable();
         SymbolTable(SymbolTable* parent);
-        void Put(std::string id, Symbol simbol);
+        Symbol Put(std::string id, Symbol simbol);
         Symbol Get(std::string id);
         SymbolTable* GetParent();
         ~SymbolTable();

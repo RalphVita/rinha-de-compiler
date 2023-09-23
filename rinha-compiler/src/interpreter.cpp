@@ -95,6 +95,7 @@ void run_eq(box<Binary>& term) {
     Type r = _stack.pop();
     Type l = _stack.pop();
 
+    //TODO: Outros tipos
     _stack.push(std::get<int>(l) == std::get<int>(r));
 }
 
@@ -103,6 +104,7 @@ void run_neq(box<Binary>& term) {
     Type r = _stack.pop();
     Type l = _stack.pop();
 
+    //TODO: Outros tipos
     _stack.push(std::get<int>(l) != std::get<int>(r));
 }
 
@@ -156,7 +158,7 @@ void run_and(box<Binary>& term) {
     Type l = _stack.pop();
 
     if(std::holds_alternative<bool>(l) && std::holds_alternative<bool>(r))
-        _stack.push(std::get<int>(l) && std::get<int>(r));
+        _stack.push(std::get<bool>(l) && std::get<bool>(r));
     else
         throw 555;
 }
@@ -167,7 +169,7 @@ void run_or(box<Binary>& term) {
     Type l = _stack.pop();
 
     if(std::holds_alternative<bool>(l) && std::holds_alternative<bool>(r))
-        _stack.push(std::get<int>(l) || std::get<int>(r));
+        _stack.push(std::get<bool>(l) || std::get<bool>(r));
     else
         throw 555;
 }
@@ -196,8 +198,8 @@ void load_paran_list(box<Function>& function){
         std::string id = parameters[i].text;
         rinha_compiler::Symbol symbol = rinha_compiler::init_symbol(id, current_scope);
 
-        symbolTable->Put(id, symbol);
-        symbol = symbolTable->Get(id);
+        symbol = symbolTable->Put(id, symbol);
+        //symbol = symbolTable->Get(id);
 
         _memory.store(symbol, value);
     }
@@ -238,45 +240,59 @@ void run_binary(box<Binary>& term){
     switch (term->op)
     {
         case BinaryOp::Add:
+            trace("run_plus");
             run_plus(term);
             break;
         case BinaryOp::Sub:
+            trace("run_minus");
             run_minus(term);
             break;
         case BinaryOp::Mul:
+            trace("run_times");
             run_times(term);
             break;
         case BinaryOp::Div:
+            trace("run_over");
             run_over(term);
             break;
         case BinaryOp::Rem:
+            trace("run_rem");
             run_rem(term);
             break;
         case BinaryOp::Eq:
+            trace("run_eq");
             run_eq(term);
             break;
         case BinaryOp::Neq:
+            trace("run_neq");
             run_neq(term);
             break;
         case BinaryOp::Lt:
+            trace("run_lt");
             run_lt(term);
             break;
         case BinaryOp::Gt:
+            trace("run_gt");
             run_gt(term);
             break;
         case BinaryOp::Lte:
+            trace("run_lte");
             run_lte(term);
             break;
         case BinaryOp::Gte:
+            trace("run_gte");
             run_gte(term);
             break;
         case BinaryOp::And:
+            trace("run_and");
             run_and(term);
             break;
         case BinaryOp::Or:
+            trace("run_or");
             run_or(term);
             break;
         default:
+            trace("Binario invalido");
             throw 555;
             break;
     }
@@ -299,7 +315,7 @@ void run_function_decl(box<Let>& term){
 
     rinha_compiler::Symbol symbol = rinha_compiler::init_symbol(id, current_scope, term);
 
-    symbolTable->Put(id, symbol);
+    symbol = symbolTable->Put(id, symbol);
     _memory.store(symbol, id);
 
     //current_scope--;
@@ -314,7 +330,8 @@ void run_let(box<Let>& term){
         std::string id = term->name.text;
         rinha_compiler::Symbol symbol = rinha_compiler::init_symbol(id, current_scope);
 
-        symbolTable->Put(id, symbol);
+        symbol = symbolTable->Put(id, symbol);
+        //symbol = symbolTable->Get(id);
 
         std::visit(walker::VisitTerm{}, value);
         Type result = _stack.pop();
