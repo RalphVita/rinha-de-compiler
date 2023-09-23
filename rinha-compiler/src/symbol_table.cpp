@@ -6,19 +6,27 @@ namespace rinha_compiler{
 
     SymbolTable::SymbolTable(){
         size = 0;
+        has_parent = false;
     }
     SymbolTable::SymbolTable(SymbolTable* parent)
     {
-        parent = parent;   
+        this->parent = parent;   
         size = 0;
+        has_parent = true;
     }
 
     Symbol SymbolTable::Get(std::string id){
         for(SymbolTable* st = this; st != nullptr; st = st->parent){
+            trace("---Get---");
+            trace(st->table.size());
             auto simbol = st->table.find(id);
+            
             if(simbol != st->table.end())
                 return simbol->second;
-            st = st->parent;
+            if(!st->has_parent){
+                trace(id);
+                throw 555;
+            }
         }
         throw 555;
     }

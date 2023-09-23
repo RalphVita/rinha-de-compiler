@@ -17,7 +17,8 @@
 
 int main(int argc, char **argv) {
 
-    std::string path = "/mnt/c/WORKSPACE/source/RalphVita/rinha-de-compiler/tests/test_data/sum.json";//argv[1];
+    //std::string path = "/mnt/c/WORKSPACE/source/RalphVita/rinha-de-compiler/tests/test_data/sum.json";
+    std::string path = argv[1];
     auto json_data = *daw::read_file( path );
     
     //std::cout << json_data << std::endl;

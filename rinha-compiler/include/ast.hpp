@@ -8,6 +8,13 @@
 #include <variant>
 #include <daw/json/daw_json_link.h>
 
+#define TRACE
+#ifdef TRACE
+#define trace(msg) std::cout << "TRACE: " <<  msg << std::endl;
+#else
+#define trace(msg)
+#endif
+
 #ifndef AST_HPP
 #define AST_HPP
 

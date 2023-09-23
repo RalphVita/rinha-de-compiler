@@ -15,6 +15,7 @@ namespace rinha_compiler{
         SymbolTable* parent;
         std::map<std::string, Symbol> table;
         int size;
+        bool has_parent = false;;
     public:
         SymbolTable();
         SymbolTable(SymbolTable* parent);

@@ -21,19 +21,19 @@ namespace walker {
     //using Type = std::variant<int, bool, std::string>;
     
     struct VisitTerm {
-        void operator()(Int& term){  run_int(term);}
-        void operator()(Str& term){  run_str(term);}
-        void operator()(box<Call>& term){  run_call(term);}
-        void operator()(box<Binary>& term){  run_binary(term);}
-        void operator()(box<Function>& term){  run_function(term);}
-        void operator()(box<Let>& term){  run_let(term);}
-        void operator()(box<If>& term){  run_if(term);}
-        void operator()(box<Print>& term){  run_print(term);}
-        void operator()(box<First>& term){  run_first(term);}
-        void operator()(box<Second>& term){  run_second(term);}
-        void operator()(Bool& term){  run_bool(term);}
-        void operator()(box<Tuple>& term){  run_tuple(term);}
-        void operator()(box<Var>& term){  run_var(term);}
+        void operator()(Int& term){  trace("run_int");run_int(term);}
+        void operator()(Str& term){  trace("run_str");run_str(term);}
+        void operator()(box<Call>& term){  trace("run_call");run_call(term);}
+        void operator()(box<Binary>& term){  trace("run_binary");run_binary(term);}
+        void operator()(box<Function>& term){  trace("run_function");run_function(term);}
+        void operator()(box<Let>& term){  trace("run_let");run_let(term);}
+        void operator()(box<If>& term){  trace("run_if");run_if(term);}
+        void operator()(box<Print>& term){  trace("run_print");run_print(term);}
+        void operator()(box<First>& term){  trace("run_first");run_first(term);}
+        void operator()(box<Second>& term){  trace("run_second");run_second(term);}
+        void operator()(Bool& term){  trace("run_bool");run_bool(term);}
+        void operator()(box<Tuple>& term){  trace("run_tuple");run_tuple(term);}
+        void operator()(box<Var>& term){  trace("run_var");run_var(term);}
     };
 
 

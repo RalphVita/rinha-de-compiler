@@ -283,6 +283,7 @@ void run_binary(box<Binary>& term){
 }
 void run_function(box<Function>& term){
     rinha_compiler::SymbolTable* symbol_table_function = new rinha_compiler::SymbolTable(symbolTable);
+    symbolTable = symbol_table_function;
     load_paran_list(term);
 
     std::visit(walker::VisitTerm{}, term->value.terms.front());
@@ -367,7 +368,9 @@ void run_tuple(box<Tuple>& term){
 //Usando uma váriavel
 void run_var(box<Var>& term){
     std::string id = term->text;
+    trace(id);
     rinha_compiler::Symbol symbol = symbolTable->Get(id);
+    trace(id);
     Type value = _memory.load(symbol);
 
     _stack.push(value);
