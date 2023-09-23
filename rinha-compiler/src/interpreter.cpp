@@ -224,21 +224,28 @@ void run_binary(box<Binary>& term){
     }
 }
 void run_function(box<Function>& term){
-    //return 0;
+    
 }
 void run_let(box<Let>& term){
     //return 0;
 }
 void run_if(box<If>& term){
-    //return 0;
+    std::visit(walker::VisitTerm{}, term->condition.terms.front());
+    Type test = _stack.pop();
+    if(!std::holds_alternative<bool>(test))
+        throw 555;
+    if(std::get<bool>(test)){
+        std::visit(walker::VisitTerm{}, term->then.terms.front());
+    }else{
+        std::visit(walker::VisitTerm{}, term->otherwise.terms.front());
+    }
 }
 
 void run_print(box<Print>& term){
     std::visit(walker::VisitTerm{}, term->value.terms.front());
-    //std::cout << _stack.pop() << std::endl;
-    std::visit([](const auto &x) { std::cout << x << std::endl; }, _stack.pop());
-    //return value;
-    ////return 0;
+    Type value = _stack.pop();
+    std::visit([](const auto &x) { std::cout << x << std::endl; }, value);
+    _stack.push(value);
 }
 
 void run_first(box<First>& term){
