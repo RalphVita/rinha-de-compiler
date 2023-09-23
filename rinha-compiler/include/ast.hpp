@@ -6,9 +6,13 @@
 #include <map>
 #include <box.hpp>
 #include <variant>
+#include <daw/json/daw_json_link.h>
 
 #ifndef AST_HPP
 #define AST_HPP
+
+enum class BinaryOp : uint8_t { Add, Sub, Mul, Div, Rem, Eq, Neq, Lt, Gt, Lte, Gte, And, Or };
+
 struct Location
 {
     int start = 0;
@@ -103,7 +107,7 @@ struct Let
 struct Binary {
   std::string kind{};
   BoxTerm lhs;
-  std::string op{};
+  BinaryOp op{};
   BoxTerm rhs;
   Location location;
 };

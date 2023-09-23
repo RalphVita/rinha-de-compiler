@@ -4,6 +4,82 @@
 
 using BoxTermMaker = struct _BoxTermMaker;
 
+constexpr BinaryOp from_string( daw::tag_t<BinaryOp>, std::string_view sv ) {
+  if( sv == "Add" ) {
+    return BinaryOp::Add;
+  }
+  else if( sv == "Sub" ) {
+    return BinaryOp::Sub;
+  }
+  else if( sv == "Mul" ) {
+    return BinaryOp::Mul;
+  }
+  else  if( sv == "Div" ) {
+    return BinaryOp::Div;
+  }
+  else if( sv == "Rem" ) {
+    return BinaryOp::Rem;
+  }
+  else if( sv == "Eq" ) {
+    return BinaryOp::Eq;
+  }
+  else  if( sv == "Neq" ) {
+    return BinaryOp::Neq;
+  }
+  else if( sv == "Lt" ) {
+    return BinaryOp::Lt;
+  }
+  else if( sv == "Gt" ) {
+    return BinaryOp::Gt;
+  }
+  else  if( sv == "Lte" ) {
+    return BinaryOp::Lte;
+  }
+  else if( sv == "Gte" ) {
+    return BinaryOp::Gte;
+  }
+  else if( sv == "And" ) {
+    return BinaryOp::And;
+  }
+  else
+    return BinaryOp::Or;
+  
+}
+
+std::string to_string( BinaryOp op ) noexcept {
+		switch( op ) {
+      case BinaryOp::Add:
+        return "Add";
+      case BinaryOp::Sub:
+        return "Sub";
+      case BinaryOp::Mul:
+        return "Mul";
+      case BinaryOp::Div:
+        return "Div";
+      case BinaryOp::Rem:
+        return "Rem";
+      case BinaryOp::Eq:
+        return "Eq";
+      case BinaryOp::Neq:
+        return "Neq";
+      case BinaryOp::Lt:
+        return "Lt";
+      case BinaryOp::Gt:
+        return "Gt";
+      case BinaryOp::Lte:
+        return "Lte";
+      case BinaryOp::Gte:
+        return "Gte";
+      case BinaryOp::And:
+        return "And";
+      case BinaryOp::Or:
+        return "Or";
+      default:
+        throw 555;
+    }
+}
+
+
 
 namespace daw::json {
   
@@ -119,10 +195,15 @@ template <>
       json_member_list<
         json_string<"kind">,
         json_raw<"lhs", BoxTerm, BoxTermMaker>,
-        json_string<"op">,
+        json_custom<"op", BinaryOp>,
         json_raw<"rhs", BoxTerm, BoxTermMaker>,
         json_class<"location", Location>
       >;
+    
+    static inline auto
+    to_json_data( Binary const &value ) {
+      return std::forward_as_tuple( value.op );
+    }
   };
 
   template <> 
