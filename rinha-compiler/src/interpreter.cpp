@@ -290,14 +290,15 @@ void run_function(box<Function>& term){
 void run_function_decl(box<Let>& term){
     std::string id = term->name.text;
     Term value = term->value.terms.front();
-    current_scope++;
+    //current_scope++;
     _memory.increment(current_scope + 1);
 
     rinha_compiler::Symbol symbol = rinha_compiler::init_symbol(id, current_scope, term);
 
     symbolTable->Put(id, symbol);
+    _memory.store(symbol, id);
 
-    current_scope--;
+    //current_scope--;
 }
 
 void run_let(box<Let>& term){
@@ -372,6 +373,7 @@ namespace interpreter {
     void walk(File file){
         current_scope = 0;
         _memory.increment(current_scope + 1);
+        _memory.push(current_scope);
         symbolTable = std::unique_ptr<rinha_compiler::SymbolTable>(new rinha_compiler::SymbolTable());
         std::visit(walker::VisitTerm{}, file.expression.terms.front());
     }
