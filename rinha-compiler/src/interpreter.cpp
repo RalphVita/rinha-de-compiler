@@ -249,37 +249,29 @@ void run_print(box<Print>& term){
 }
 
 void run_first(box<First>& term){
-    //return 0;
-    // void value = std::visit(Overload{
-    //                     [](box<Tuple>& tuple) { return  tuple.first;},
-    //                     [](box<auto>&)   { 
-    //                         std::cout << "First nao e uma tupla. TODO"; 
-    //                         return 0;
-    //                     }
-    //                 }, term.value);
+    std::visit(walker::VisitTerm{}, term->value.terms.front());
+    Type second = _stack.pop();
+    Type first = _stack.pop();
 
+    _stack.push(first);
 }
 void run_second(box<Second>& term){
+    std::visit(walker::VisitTerm{}, term->value.terms.front());
+    Type second = _stack.pop();
+    Type first = _stack.pop();
+
+    _stack.push(second);
 }
 void run_bool(Bool& term){
     _stack.push(term.value);
 }
-void run_tuple(box<Tuple>& term){//return 0;
+void run_tuple(box<Tuple>& term){
+    std::visit(walker::VisitTerm{}, term->first.terms.front());
+    std::visit(walker::VisitTerm{}, term->second.terms.front());
 }
 void run_var(box<Var>& term){//return 0;
 }
-namespace interpreter {    
-    // template<typename ... Ts>                                                 // (7) 
-    // struct Overload : Ts ... { 
-    //     using Ts::operator() ...;
-    // };
-    // template<class... Ts> Overload(Ts...) -> Overload<Ts...>;
-
-    //namespace walker{
-        
-    //}
-
-
+namespace interpreter {
     void walk(File file){
         std::visit(walker::VisitTerm{}, file.expression.terms.front());
     }
