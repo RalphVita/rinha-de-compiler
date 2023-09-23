@@ -108,7 +108,7 @@ void run_lt(box<Binary>& term) {
         throw 555;
 }
 
-void run_rt(box<Binary>& term) {
+void run_gt(box<Binary>& term) {
     bin_op(term);
     Type r = _stack.pop();
     Type l = _stack.pop();
@@ -177,15 +177,51 @@ void run_call(box<Call>& term){
 }
 void run_binary(box<Binary>& term){
     
-    // switch (term->op)
-    // {
-    // case /* constant-expression */:
-    //     /* code */
-    //     break;
-    
-    // default:
-    //     break;
-    // }
+    switch (term->op)
+    {
+        case BinaryOp::Add:
+            run_plus(term);
+            break;
+        case BinaryOp::Sub:
+            run_minus(term);
+            break;
+        case BinaryOp::Mul:
+            run_times(term);
+            break;
+        case BinaryOp::Div:
+            run_over(term);
+            break;
+        case BinaryOp::Rem:
+            run_rem(term);
+            break;
+        case BinaryOp::Eq:
+            run_eq(term);
+            break;
+        case BinaryOp::Neq:
+            run_neq(term);
+            break;
+        case BinaryOp::Lt:
+            run_lt(term);
+            break;
+        case BinaryOp::Gt:
+            run_gt(term);
+            break;
+        case BinaryOp::Lte:
+            run_lte(term);
+            break;
+        case BinaryOp::Gte:
+            run_gte(term);
+            break;
+        case BinaryOp::And:
+            run_and(term);
+            break;
+        case BinaryOp::Or:
+            run_or(term);
+            break;
+        default:
+            throw 555;
+            break;
+    }
 }
 void run_function(box<Function>& term){
     //return 0;
