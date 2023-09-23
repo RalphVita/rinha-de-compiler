@@ -7,8 +7,7 @@
 #include <box.hpp>
 #include<ast.hpp>
 
-template<class... Ts> struct overload : Ts... { using Ts::operator()...; };
-template<class... Ts> overload(Ts...) -> overload<Ts...>; // line not needed in C++20...
+using Type = std::variant<int, bool, std::string>;
 
 stack _stack;
 
