@@ -5,11 +5,14 @@
 #include <walker.hpp>
 #include <stack.hpp>
 #include <box.hpp>
-#include<ast.hpp>
+#include <ast.hpp>
+#include <memory.hpp>
 
 using Type = std::variant<int, bool, std::string>;
 
+
 stack _stack;
+rinha_compiler::Memory _memory;
 
 void bin_op(box<Binary>& term){
     std::visit(walker::VisitTerm{}, term->lhs.terms.front());
@@ -176,14 +179,16 @@ void run_str(Str& term){
 
 box<Let> find_func_decl(std::string function_name){
     Let y;
-    box<Let> x = std::move(y);//TODO
+    box<Let> x = std::move(y);//TODO: Pegar na tabela de simbolos
     return x;
 }
 
 void load_paran_list(box<Function>& function){
     for (auto parameter = function->parameters.rend(); parameter != function->parameters.rbegin(); --parameter){
         Type value = _stack.pop();
-        //TODO: Armarzenar num frame de memória
+        rinha_compiler::Symbol symbol; //TODO pegar na tabela de simbolos.
+
+        _memory.store(symbol, value);
     }
 }
 
@@ -195,7 +200,8 @@ void run_call(box<Call>& term){
             std::visit(walker::VisitTerm{}, arg);
     }
 
-    //TODO: Criar no frame de memória
+    rinha_compiler::Symbol symbol;//TODO: Pegar da tabela de symbolos
+    _memory.push(symbol.scope);
 
     //Recupera nome da função
     std::visit(walker::VisitTerm{}, term->callee.terms.front());
@@ -208,6 +214,8 @@ void run_call(box<Call>& term){
 
     //Varre a o bloco da função recursivamente
     std::visit(walker::VisitTerm{}, let_function->value.terms.front());
+
+    _memory.pop(symbol.scope);
 }
 void run_binary(box<Binary>& term){
     
@@ -263,7 +271,20 @@ void run_function(box<Function>& term){
     std::visit(walker::VisitTerm{}, term->value.terms.front());
 }
 void run_let(box<Let>& term){
-    //return 0;
+    std::string id = term->name.text;
+    rinha_compiler::Symbol symbol;//TODO: Criar na tabela de simbolos
+
+    Term value = term->value.terms.front();
+    if(std::holds_alternative<Function>(value)){
+        //TODO: Adiciona na tabela de symbolos
+    }
+    else {
+        std::visit(walker::VisitTerm{}, value);
+        Type result = _stack.pop();
+        _memory.store(symbol, result);
+    }
+
+    std::visit(walker::VisitTerm{}, term->next.terms.front());
 }
 void run_if(box<If>& term){
     std::visit(walker::VisitTerm{}, term->condition.terms.front());
@@ -305,10 +326,15 @@ void run_tuple(box<Tuple>& term){
     std::visit(walker::VisitTerm{}, term->first.terms.front());
     std::visit(walker::VisitTerm{}, term->second.terms.front());
 }
-void run_var(box<Var>& term){//return 0;
+void run_var(box<Var>& term){
+    rinha_compiler::Symbol symbol;//TODO: Pegar da tabela de symbolos
+    Type value = _memory.load(symbol);
+
+    _stack.push(value);
 }
 namespace interpreter {
     void walk(File file){
+        _memory = rinha_compiler::Memory(10);
         std::visit(walker::VisitTerm{}, file.expression.terms.front());
     }
 }
