@@ -167,7 +167,7 @@ void run_or(box<Binary>& term) {
 
 
 void run_int(Int& term){
-    //return term.value;
+    _stack.push(term.value);
 }
 void run_str(Str& term){
     _stack.push(term.value);
@@ -216,9 +216,10 @@ void run_first(box<First>& term){
     //                 }, term.value);
 
 }
-void run_second(box<Second>& term){//return 0;
+void run_second(box<Second>& term){
 }
-void run_bool(Bool& term){//return 0;
+void run_bool(Bool& term){
+    _stack.push(term.value);
 }
 void run_tuple(box<Tuple>& term){//return 0;
 }
