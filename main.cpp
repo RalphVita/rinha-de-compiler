@@ -7,6 +7,7 @@
 #include <typeinfo>
 #include <map>
 #include <variant>
+#include <daw/daw_read_file.h>
 
 
 
@@ -14,36 +15,14 @@
 
 
 
-int main() {
-    std::string_view test_001_t_json_data = R"({
-    "name": "print.rinha",
-    "expression": {
-        "kind": "Print",
-        "value": {
-        "value": "Hello world",
-        "kind": "Str",
-        
-        "location": {
-            "start": 7,
-            "end": 20,
-            "filename": "print.rinha"
-        }
-        },
-        "location": {
-        "start": 0,
-        "end": 21,
-        "filename": "print.rinha"
-        }
-    },
-    "location": {
-        "start": 0,
-        "end": 21,
-        "filename": "print.rinha"
-    }
-    })";
+int main(int argc, char **argv) {
+
+    std::string path = argv[1];
+    auto json_data = *daw::read_file( path );
     
+    //std::cout << json_data << std::endl;
     
-    File file = json_to_ast::parser(test_001_t_json_data);
+    File file = json_to_ast::parser(json_data);
 
     interpreter::walk(file);
     

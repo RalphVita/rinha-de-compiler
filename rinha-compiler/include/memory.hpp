@@ -19,18 +19,22 @@ namespace rinha_compiler{
         Type load(int scope, int addr);
     public:
         Memory();
-        void init(int size);
         void store(Symbol symbol, Type value);
         Type load(Symbol symbol);
         void push(int scope);
         void pop(int scope);
+        void increment(int size);
         ~Memory();
     };
 
-    Memory::Memory(){}
-    void Memory::init(int size)
+    Memory::Memory(){
+        men.reserve(1);
+    }
+
+    void Memory::increment(int size)
     {
-        men.reserve(size);
+        if(size > men.size())
+            men.resize(size);
     }
 
     void Memory::store(Symbol symbol, Type value){
@@ -50,7 +54,7 @@ namespace rinha_compiler{
     }
 
     void Memory::push(int scope){
-        std::vector<Type> vt(1000);//TODO
+        std::vector<Type> vt(1000);//TODO: Aumentar a medida que for preciso
         men[scope].push(vt);
     }
     void Memory::pop(int scope){
