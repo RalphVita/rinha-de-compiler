@@ -3,4 +3,5 @@
 #include <box.hpp>
 #include <parser_json_to_ast.hpp>
 #include <interpreter.hpp>
+#include <compiler.hpp>
 #endif
