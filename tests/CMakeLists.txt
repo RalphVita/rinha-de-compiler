@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22.1)
+cmake_minimum_required(VERSION 3.0)
 
 
 add_executable(parser_json_to_ast_test src/parser_json_to_ast_test.cpp )

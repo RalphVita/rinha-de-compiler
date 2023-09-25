@@ -3,8 +3,7 @@
 #include <string>
 #include <vector>
 #include <stack>
-#include "Symbol.hpp"
-//#include <ast.hpp>
+#include "symbol.hpp"
 
 #ifndef MEMORY_HPP
 #define MEMORY_HPP
