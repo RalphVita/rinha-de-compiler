@@ -10,7 +10,6 @@
 #include <memory.hpp>
 #include <symbol_table.hpp>
 
-using Type = std::variant<int, bool, std::string>;
 
 
 stack _stack;
@@ -36,7 +35,12 @@ void run_plus(box<Binary>& term) {
         Type operator()(std::string l, int r){ return l + std::to_string(r);}
         Type operator()(int l, std::string r){ return std::to_string(l) + r;}
         Type operator()(int l, int r){ return l + r;}
-        //Type operator()(auto &l, auto &r){ throw 555;}TODO
+        Type operator()(box<tupla> &l, box<tupla> &r){ return 555;}
+        Type operator()(std::string l, box<tupla> &r){ return 555;}
+        Type operator()(int l, box<tupla> &r){ return 555;}
+        Type operator()(box<tupla> &l, std::string r){ return 555;}
+        Type operator()(box<tupla> &l, int r){ return 555;}
+        //Type operator()(auto &l, auto &r){ throw 555;}//TODO
     };
     
 
@@ -356,23 +360,52 @@ void run_if(box<If>& term){
 void run_print(box<Print>& term){
     std::visit(walker::VisitTerm{}, term->value.terms.front());
     Type value = _stack.pop();
-    std::visit([](const auto &x) { std::cout << x << std::endl; }, value);
+
+    struct sum_visit
+    {
+        void operator()(std::string x){ std::cout << x;}
+        void operator()(bool x){ std::cout << (x ? "true": "false") ;}
+        void operator()(int x){ std::cout << x;}
+        void operator()(box<tupla> &x){ 
+            std::cout << "("; 
+            std::visit(*this, std::get<0>(x->value));
+            std::cout << ", "; 
+            std::visit(*this, std::get<1>(x->value));
+            std::cout << ")";
+        }
+    };
+    
+
+    std::visit(sum_visit{}, value);
+    std::cout << std::endl;
+
+    //std::visit([](const auto &x) { std::cout << x << std::endl; }, value);
     _stack.push(value);
 }
 
 void run_first(box<First>& term){
     std::visit(walker::VisitTerm{}, term->value.terms.front());
-    Type second = _stack.pop();
-    Type first = _stack.pop();
-
-    _stack.push(first);
+    //Type second = _stack.pop();
+    //Type first = _stack.pop();
+    auto _tupla = _stack.pop();
+    if(std::holds_alternative<box<struct tupla>>(_tupla)){
+        Type first = std::get<0>(std::get<box<struct tupla>>(_tupla)->value);
+        _stack.push(first);
+    }
+    else
+        throw 555;
 }
 void run_second(box<Second>& term){
     std::visit(walker::VisitTerm{}, term->value.terms.front());
-    Type second = _stack.pop();
-    Type first = _stack.pop();
-
-    _stack.push(second);
+    //Type second = _stack.pop();
+    //Type first = _stack.pop();
+    auto _tupla = _stack.pop();
+    if(std::holds_alternative<box<struct tupla>>(_tupla)){
+        Type second = std::get<1>(std::get<box<struct tupla>>(_tupla)->value);
+        _stack.push(second);
+    }
+    else
+        throw 555;
 }
 void run_bool(Bool& term){
     _stack.push(term.value);
@@ -380,6 +413,11 @@ void run_bool(Bool& term){
 void run_tuple(box<Tuple>& term){
     std::visit(walker::VisitTerm{}, term->first.terms.front());
     std::visit(walker::VisitTerm{}, term->second.terms.front());
+    Type second = _stack.pop();
+    Type first = _stack.pop();
+    auto result = std::make_tuple(first, second);
+    tupla t(result);
+    _stack.push(t);
 }
 
 //Usando uma váriavel
