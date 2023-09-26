@@ -38,7 +38,11 @@ void test_binary_op_neq_string(File);
 void test_binary_op_or(File);
 void test_binary_op_rem_number(File);
 void test_binary_op_sub_number(File);
+
 void test_combination(File);
+void test_fib(File);
+void test_print(File);
+void test_sum(File);
 
 int main(int argc, char **argv ){
 
@@ -116,8 +120,15 @@ int main(int argc, char **argv ){
         test_binary_op_rem_number(file);
     else if(test_name == "test_binary_op_sub_number")
         test_binary_op_sub_number(file);
+    
     else if(test_name == "test_combination")
         test_combination(file);
+    else if(test_name == "test_fib")
+        test_fib(file);
+    else if(test_name == "test_print")
+        test_print(file);
+    else if(test_name == "test_sum")
+        test_sum(file);
 
     std::cout.rdbuf(p_cout_streambuf);
     
@@ -348,8 +359,31 @@ void test_binary_op_sub_number(File file){
 
     assert(oss && oss.str() == expected);
 }
+
+
 void test_combination(File file){
     auto expected = "45\n";
+
+    interpreter::walk(file);
+
+    assert(oss && oss.str() == expected);
+}
+void test_fib(File file){
+    auto expected = "55\n";
+
+    interpreter::walk(file);
+
+    assert(oss && oss.str() == expected);
+}
+void test_print(File file){
+    auto expected = "Hello world\n";
+
+    interpreter::walk(file);
+
+    assert(oss && oss.str() == expected);
+}
+void test_sum(File file){
+    auto expected = "15\n";
 
     interpreter::walk(file);
 

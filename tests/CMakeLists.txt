@@ -55,3 +55,6 @@ add_test(NAME test_binary_op_rem_number COMMAND interpreter_test "test_binary_op
 add_test(NAME test_binary_op_sub_number COMMAND interpreter_test "test_binary_op_sub_number" "${CMAKE_SOURCE_DIR}/tests/test_data/binary_op_sub_number.json")
 
 add_test(NAME test_combination COMMAND interpreter_test "test_combination" "${CMAKE_SOURCE_DIR}/tests/test_data/combination.json")
+add_test(NAME test_fib COMMAND interpreter_test "test_fib" "${CMAKE_SOURCE_DIR}/tests/test_data/fib.json")
+add_test(NAME test_print COMMAND interpreter_test "test_print" "${CMAKE_SOURCE_DIR}/tests/test_data/print.json")
+add_test(NAME test_sum COMMAND interpreter_test "test_sum" "${CMAKE_SOURCE_DIR}/tests/test_data/sum.json")
