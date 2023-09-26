@@ -2,17 +2,25 @@
 
 namespace rinha_compiler{
 
-    template<typename ... Args>
-    std::string string_format( const std::string&, Args ...);
-
     RinhaException::RinhaException(std::string msg, Location location){
         this->msg = msg;
         this->location = location;
+        has_location = true;
     }
+    RinhaException::RinhaException(std::string msg){
+        this->msg = msg;
+        has_location = false;
+    }
+
+    // template<typename ... Args>
+    // RinhaException::RinhaException(const std::string& msg, Args ... args){
+    //     this->msg = string_format(msg, args...);
+    //     has_location = false;
+    // }
 
     std::string RinhaException::message() const throw()
     {
-        return string_format("File: %s -> Start: %d, End: %d. Error: %s", location.filename.c_str(), location.start, location.end, msg.c_str());
+        return has_location ? string_format("File: %s -> Start: %d, End: %d. Error: %s", location.filename.c_str(), location.start, location.end, msg.c_str()) : this->msg;
     }
 
     template<typename ... Args>

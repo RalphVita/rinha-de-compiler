@@ -9,6 +9,7 @@
 #include <ast.hpp>
 #include <memory.hpp>
 #include <symbol_table.hpp>
+#include <rinha_exception.hpp>
 
 
 
@@ -16,6 +17,12 @@ stack _stack;
 rinha_compiler::Memory _memory = rinha_compiler::Memory();
 rinha_compiler::SymbolTable* symbolTable;// = std::move(rinha_compiler::SymbolTable());
 int current_scope;
+
+template<class... Ts> struct overload : Ts... { using Ts::operator()...; };
+template<class... Ts> overload(Ts...) -> overload<Ts...>;
+
+template <class Visitor, class... Variants>
+constexpr Type visit(Visitor&& vis, Variants&&... vars);
 
 
 void bin_op(box<Binary>& term){
@@ -31,20 +38,35 @@ void run_plus(box<Binary>& term) {
 
     struct sum_visit
     {
+        sum_visit(box<Binary>& _term) : term(_term){}
         Type operator()(std::string l, std::string r){ return l + r;}
         Type operator()(std::string l, int r){ return l + std::to_string(r);}
         Type operator()(int l, std::string r){ return std::to_string(l) + r;}
         Type operator()(int l, int r){ return l + r;}
-        Type operator()(box<tupla> &l, box<tupla> &r){ return 555;}
-        Type operator()(std::string l, box<tupla> &r){ return 555;}
-        Type operator()(int l, box<tupla> &r){ return 555;}
-        Type operator()(box<tupla> &l, std::string r){ return 555;}
-        Type operator()(box<tupla> &l, int r){ return 555;}
-        //TODO std::bad_variant_access
+        Type operator()(box<tupla> &l, box<tupla> &r){
+            throw rinha_compiler::RinhaException("Tipos inválidos para operação binária SUM", term->location);
+            return false;
+        }
+        Type operator()(std::string l, box<tupla> &r){
+            throw rinha_compiler::RinhaException("Tipos inválidos para operação binária SUM", term->location);
+            return false;
+        }
+        Type operator()(int l, box<tupla> &r){
+            throw rinha_compiler::RinhaException("Tipos inválidos para operação binária SUM", term->location);
+            return false;
+        }
+        Type operator()(box<tupla> &l, std::string r){
+            throw rinha_compiler::RinhaException("Tipos inválidos para operação binária SUM", term->location);
+            return false;
+        }
+        Type operator()(box<tupla> &l, int r){
+            throw rinha_compiler::RinhaException("Tipos inválidos para operação binária SUM", term->location);
+            return false;
+        }
+        box<Binary> &term;
     };
-    
 
-    Type result = std::visit(sum_visit{}, l, r);
+    Type result = std::visit(sum_visit{term}, l, r);
 
     _stack.push(result);
 }
@@ -58,7 +80,7 @@ void run_minus(box<Binary>& term) {
     if(std::holds_alternative<int>(l) && std::holds_alternative<int>(r))
         _stack.push(std::get<int>(l) - std::get<int>(r));
     else
-        throw 555;
+        throw rinha_compiler::RinhaException("SUB só aceita Number.", term->location);
 }
 
 void run_times(box<Binary>& term) {
@@ -69,7 +91,7 @@ void run_times(box<Binary>& term) {
     if(std::holds_alternative<int>(l) && std::holds_alternative<int>(r))
         _stack.push(std::get<int>(l) * std::get<int>(r));
     else
-        throw 555;
+        throw rinha_compiler::RinhaException("Mul só aceita Number.", term->location);
 }
 
 void run_over(box<Binary>& term) {
@@ -80,7 +102,7 @@ void run_over(box<Binary>& term) {
     if(std::holds_alternative<int>(l) && std::holds_alternative<int>(r))
         _stack.push(std::get<int>(l) / std::get<int>(r));
     else
-        throw 555;
+        throw rinha_compiler::RinhaException("DIV só aceita Number.", term->location);
 }
 
 void run_rem(box<Binary>& term) {
@@ -91,7 +113,7 @@ void run_rem(box<Binary>& term) {
     if(std::holds_alternative<int>(l) && std::holds_alternative<int>(r))
         _stack.push(std::get<int>(l) % std::get<int>(r));
     else
-        throw 555;
+        throw rinha_compiler::RinhaException("REM só aceita Number.", term->location);
 }
 
 void run_eq(box<Binary>& term) {
@@ -99,22 +121,17 @@ void run_eq(box<Binary>& term) {
     Type r = _stack.pop();
     Type l = _stack.pop();
 
-    struct eq_visit
-    {
-        Type operator()(std::string l, std::string r){ return l == r;}
-        //Type operator()(bool l, bool r){ return l == r;}
-        Type operator()(int l, int r){ return l == r;}
-        Type operator()(std::string l, int r){ return 555;}
-        Type operator()(int l, std::string r){ return 555;}
-        Type operator()(box<tupla> &l, box<tupla> &r){ return 555;}
-        Type operator()(std::string l, box<tupla> &r){ return 555;}
-        Type operator()(int l, box<tupla> &r){ return 555;}
-        Type operator()(box<tupla> &l, std::string r){ return 555;}
-        Type operator()(box<tupla> &l, int r){ return 555;}
-        //TODO std::bad_variant_access
+    auto eq_visit = overload {
+        [](std::string l, std::string r){ return l == r;},
+        [](bool l, bool r){ return l == r;},
+        [](int l, int r){ return l == r;},
+        [&term](auto, auto) { 
+            throw rinha_compiler::RinhaException("Tipos inválidos para operação binária EQ", term->location);
+            return false;
+        }
     };
 
-    Type result = std::visit(eq_visit{}, l, r);
+    Type result = std::visit(eq_visit, l, r);
 
     _stack.push(result);
 }
@@ -124,22 +141,17 @@ void run_neq(box<Binary>& term) {
     Type r = _stack.pop();
     Type l = _stack.pop();
 
-    struct eq_visit
-    {
-        Type operator()(std::string l, std::string r){ return l != r;}
-        //Type operator()(bool l, bool r){ return l != r;}
-        Type operator()(int l, int r){ return l != r;}
-        Type operator()(std::string l, int r){ return 555;}
-        Type operator()(int l, std::string r){ return 555;}
-        Type operator()(box<tupla> &l, box<tupla> &r){ return 555;}
-        Type operator()(std::string l, box<tupla> &r){ return 555;}
-        Type operator()(int l, box<tupla> &r){ return 555;}
-        Type operator()(box<tupla> &l, std::string r){ return 555;}
-        Type operator()(box<tupla> &l, int r){ return 555;}
-        //TODO std::bad_variant_access
+    auto eq_visit = overload {
+        [](std::string l, std::string r){ return l != r;},
+        [](bool l, bool r){ return l != r;},
+        [](int l, int r){ return l != r;},
+        [&term](auto, auto) { 
+            throw rinha_compiler::RinhaException("Tipos inválidos para operação binária NEQ", term->location);
+            return false;
+        }
     };
 
-    Type result = std::visit(eq_visit{}, l, r);
+    Type result = std::visit(eq_visit, l, r);
 
     _stack.push(result);
 }
@@ -152,7 +164,7 @@ void run_lt(box<Binary>& term) {
     if(std::holds_alternative<int>(l) && std::holds_alternative<int>(r))
         _stack.push(std::get<int>(l) < std::get<int>(r));
     else
-        throw 555;
+        throw rinha_compiler::RinhaException("Tipos inválidos para operação binária LT", term->location);
 }
 
 void run_gt(box<Binary>& term) {
@@ -163,7 +175,7 @@ void run_gt(box<Binary>& term) {
     if(std::holds_alternative<int>(l) && std::holds_alternative<int>(r))
         _stack.push(std::get<int>(l) > std::get<int>(r));
     else
-        throw 555;
+        throw rinha_compiler::RinhaException("Tipos inválidos para operação binária GT", term->location);
 }
 
 void run_lte(box<Binary>& term) {
@@ -174,7 +186,7 @@ void run_lte(box<Binary>& term) {
     if(std::holds_alternative<int>(l) && std::holds_alternative<int>(r))
         _stack.push(std::get<int>(l) <= std::get<int>(r));
     else
-        throw 555;
+        throw rinha_compiler::RinhaException("Tipos inválidos para operação binária LTE", term->location);
 }
 
 void run_gte(box<Binary>& term) {
@@ -185,7 +197,7 @@ void run_gte(box<Binary>& term) {
     if(std::holds_alternative<int>(l) && std::holds_alternative<int>(r))
         _stack.push(std::get<int>(l) >= std::get<int>(r));
     else
-        throw 555;
+        throw rinha_compiler::RinhaException("Tipos inválidos para operação binária GTE", term->location);
 }
 
 void run_and(box<Binary>& term) {
@@ -196,7 +208,7 @@ void run_and(box<Binary>& term) {
     if(std::holds_alternative<bool>(l) && std::holds_alternative<bool>(r))
         _stack.push(std::get<bool>(l) && std::get<bool>(r));
     else
-        throw 555;
+        throw rinha_compiler::RinhaException("Tipos inválidos para operação binária AND", term->location);
 }
 
 void run_or(box<Binary>& term) {
@@ -207,7 +219,7 @@ void run_or(box<Binary>& term) {
     if(std::holds_alternative<bool>(l) && std::holds_alternative<bool>(r))
         _stack.push(std::get<bool>(l) || std::get<bool>(r));
     else
-        throw 555;
+        throw rinha_compiler::RinhaException("Tipos inválidos para operação binária OR", term->location);
 }
 
 
@@ -220,12 +232,6 @@ void run_str(Str& term){
     _stack.push(term.value);
 }
 
-// box<Let> find_func_decl(std::string function_name){
-//     Let y;
-//     box<Let> x = symbolTable->Get(function_name).;
-//     return x;
-// }
-
 void load_paran_list(box<Function>& function){
     auto parameters = function->parameters;
     for (int i = parameters.size() - 1; i >= 0; i--)
@@ -235,7 +241,6 @@ void load_paran_list(box<Function>& function){
         rinha_compiler::Symbol symbol = rinha_compiler::init_symbol(id, current_scope);
 
         symbol = symbolTable->Put(id, symbol);
-        //symbol = symbolTable->Get(id);
 
         _memory.store(symbol, value);
     }
@@ -254,7 +259,7 @@ void run_call(box<Call>& term){
     std::visit(walker::VisitTerm{}, term->callee.terms.front());
     Type function_name = _stack.pop();
     if(!std::holds_alternative<std::string>(function_name))
-        throw 555;
+        throw rinha_compiler::RinhaException("Nome de função inválido.", term->location);
     
     std::string id = std::get<std::string>(function_name);
     rinha_compiler::Symbol symbol = symbolTable->Get(id);
@@ -328,8 +333,7 @@ void run_binary(box<Binary>& term){
             run_or(term);
             break;
         default:
-            trace("Binario invalido");
-            throw 555;
+            throw rinha_compiler::RinhaException("Operação binária inválida", term->location);
             break;
     }
 }
@@ -381,7 +385,7 @@ void run_if(box<If>& term){
     std::visit(walker::VisitTerm{}, term->condition.terms.front());
     Type test = _stack.pop();
     if(!std::holds_alternative<bool>(test))
-        throw 555;
+        throw rinha_compiler::RinhaException("IF só aceita bool", term->location);
     if(std::get<bool>(test)){
         std::visit(walker::VisitTerm{}, term->then.terms.front());
     }else{
@@ -425,7 +429,7 @@ void run_first(box<First>& term){
         _stack.push(first);
     }
     else
-        throw 555;
+        throw rinha_compiler::RinhaException("FIRST só aceita Tupla.", term->location);
 }
 void run_second(box<Second>& term){
     std::visit(walker::VisitTerm{}, term->value.terms.front());
@@ -437,7 +441,7 @@ void run_second(box<Second>& term){
         _stack.push(second);
     }
     else
-        throw 555;
+        throw rinha_compiler::RinhaException("SECOND só aceita Tupla.", term->location);
 }
 void run_bool(Bool& term){
     _stack.push(term.value);

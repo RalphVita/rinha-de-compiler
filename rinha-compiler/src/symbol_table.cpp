@@ -1,4 +1,5 @@
 #include <symbol_table.hpp>
+#include <rinha_exception.hpp>
 
 
 
@@ -24,11 +25,10 @@ namespace rinha_compiler{
             if(simbol != st->table.end())
                 return simbol->second;
             if(!st->has_parent){
-                trace(id);
-                throw 555;
+                throw rinha_compiler::RinhaException("Simbolo " + id + ", não encontrado na tabela de simbolos.");
             }
         }
-        throw 555;
+        throw rinha_compiler::RinhaException("Simbolo " + id + ", não encontrado na tabela de simbolos.");
     }
 
     Symbol SymbolTable::Put(std::string id, Symbol simbol){

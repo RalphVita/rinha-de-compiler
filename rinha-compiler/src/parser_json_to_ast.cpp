@@ -1,6 +1,7 @@
 #include <parser_json_to_ast.hpp>
 #include <daw/json/daw_json_link.h>
 #include <variant>
+#include <rinha_exception.hpp>
 
 using BoxTermMaker = struct _BoxTermMaker;
 
@@ -41,8 +42,12 @@ constexpr BinaryOp from_string( daw::tag_t<BinaryOp>, std::string_view sv ) {
   else if( sv == "And" ) {
     return BinaryOp::And;
   }
-  else
+  else if( sv == "Or" )
     return BinaryOp::Or;
+  else{
+    throw rinha_compiler::RinhaException("Operação binária inválida: " + std::string(sv));
+  }
+
   
 }
 
@@ -75,7 +80,8 @@ std::string to_string( BinaryOp op ) noexcept {
       case BinaryOp::Or:
         return "Or";
       default:
-        throw 555;
+      return "Or";
+        throw rinha_compiler::RinhaException("Operação binária inválida.");
     }
 }
 

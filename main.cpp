@@ -27,5 +27,6 @@ int main(int argc, char **argv) {
     }
     catch(rinha_compiler::RinhaException &ex){
         std::cout << ex.message() << std::endl;
+        throw ex;
     }
 }
