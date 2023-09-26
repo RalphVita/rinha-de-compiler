@@ -15,6 +15,7 @@ add_library(${PROJECT_NAME}
                 SHARED 
                     "${CMAKE_CURRENT_SOURCE_DIR}/include/box.hpp"
                     "${CMAKE_CURRENT_SOURCE_DIR}/include/ast.hpp"
+                    "${CMAKE_CURRENT_SOURCE_DIR}/include/rinha_exception.hpp"
                     "${CMAKE_CURRENT_SOURCE_DIR}/include/symbol.hpp"
                     "${CMAKE_CURRENT_SOURCE_DIR}/include/symbol_table.hpp"
                     "${CMAKE_CURRENT_SOURCE_DIR}/include/memory.hpp"
@@ -23,6 +24,7 @@ add_library(${PROJECT_NAME}
                     "${CMAKE_CURRENT_SOURCE_DIR}/include/walker.hpp"
                     "${CMAKE_CURRENT_SOURCE_DIR}/include/interpreter.hpp"
                     "${CMAKE_CURRENT_SOURCE_DIR}/include/compiler.hpp"
+                    "${CMAKE_CURRENT_SOURCE_DIR}/src/rinha_exception.cpp"
                     "${CMAKE_CURRENT_SOURCE_DIR}/src/symbol.cpp"
                     "${CMAKE_CURRENT_SOURCE_DIR}/src/symbol_table.cpp"
                     "${CMAKE_CURRENT_SOURCE_DIR}/src/parser_json_to_ast.cpp"

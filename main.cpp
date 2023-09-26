@@ -16,11 +16,16 @@
 
 
 int main(int argc, char **argv) {
+    try{
+        std::string path = argv[1];
+        auto json_data = *daw::read_file(path);
 
-    std::string path = argv[1];
-    auto json_data = *daw::read_file( path );
+        File file = json_to_ast::parser(json_data);
 
-    File file = json_to_ast::parser(json_data);
 
-    interpreter::walk(file);    
+        interpreter::walk(file);
+    }
+    catch(rinha_compiler::RinhaException &ex){
+        std::cout << ex.message() << std::endl;
+    }
 }
