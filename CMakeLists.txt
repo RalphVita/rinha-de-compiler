@@ -13,8 +13,8 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(daw_json_link)
 
-#include(CTest)
-#enable_testing()
+include(CTest)
+enable_testing()
 
 add_subdirectory(tests)
 

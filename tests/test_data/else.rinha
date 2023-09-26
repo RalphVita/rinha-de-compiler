@@ -1,0 +1,10 @@
+let a = 22;
+let b = "else";
+let x = (
+if (false) {
+  a
+} else {
+  b
+});
+
+print(x)

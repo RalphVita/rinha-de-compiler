@@ -1,0 +1,4 @@
+let t = (1, true);
+let f = first(t);
+let s = second(t);
+print((s,f))
