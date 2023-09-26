@@ -40,7 +40,7 @@ void run_plus(box<Binary>& term) {
         Type operator()(int l, box<tupla> &r){ return 555;}
         Type operator()(box<tupla> &l, std::string r){ return 555;}
         Type operator()(box<tupla> &l, int r){ return 555;}
-        //Type operator()(auto &l, auto &r){ throw 555;}//TODO
+        //TODO std::bad_variant_access
     };
     
 
@@ -99,8 +99,24 @@ void run_eq(box<Binary>& term) {
     Type r = _stack.pop();
     Type l = _stack.pop();
 
-    //TODO: Outros tipos
-    _stack.push(std::get<int>(l) == std::get<int>(r));
+    struct eq_visit
+    {
+        Type operator()(std::string l, std::string r){ return l == r;}
+        //Type operator()(bool l, bool r){ return l == r;}
+        Type operator()(int l, int r){ return l == r;}
+        Type operator()(std::string l, int r){ return 555;}
+        Type operator()(int l, std::string r){ return 555;}
+        Type operator()(box<tupla> &l, box<tupla> &r){ return 555;}
+        Type operator()(std::string l, box<tupla> &r){ return 555;}
+        Type operator()(int l, box<tupla> &r){ return 555;}
+        Type operator()(box<tupla> &l, std::string r){ return 555;}
+        Type operator()(box<tupla> &l, int r){ return 555;}
+        //TODO std::bad_variant_access
+    };
+
+    Type result = std::visit(eq_visit{}, l, r);
+
+    _stack.push(result);
 }
 
 void run_neq(box<Binary>& term) {
@@ -108,8 +124,24 @@ void run_neq(box<Binary>& term) {
     Type r = _stack.pop();
     Type l = _stack.pop();
 
-    //TODO: Outros tipos
-    _stack.push(std::get<int>(l) != std::get<int>(r));
+    struct eq_visit
+    {
+        Type operator()(std::string l, std::string r){ return l != r;}
+        //Type operator()(bool l, bool r){ return l != r;}
+        Type operator()(int l, int r){ return l != r;}
+        Type operator()(std::string l, int r){ return 555;}
+        Type operator()(int l, std::string r){ return 555;}
+        Type operator()(box<tupla> &l, box<tupla> &r){ return 555;}
+        Type operator()(std::string l, box<tupla> &r){ return 555;}
+        Type operator()(int l, box<tupla> &r){ return 555;}
+        Type operator()(box<tupla> &l, std::string r){ return 555;}
+        Type operator()(box<tupla> &l, int r){ return 555;}
+        //TODO std::bad_variant_access
+    };
+
+    Type result = std::visit(eq_visit{}, l, r);
+
+    _stack.push(result);
 }
 
 void run_lt(box<Binary>& term) {
