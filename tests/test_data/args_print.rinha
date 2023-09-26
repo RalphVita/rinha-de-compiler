@@ -1,1 +1,4 @@
+let f = fn(a,b,c) => {
+    a
+};
 f(print(1), print(2), print(3))
