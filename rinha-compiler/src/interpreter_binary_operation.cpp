@@ -4,6 +4,70 @@
 #include <interpreter.hpp>
 
 extern rinha_compiler::stack _stack;
+namespace rinha_compiler::walker {
+using namespace rinha_compiler::interpreter;
+
+    void run_binary(box<Binary>& term){
+            switch (term->op)
+            {
+                case BinaryOp::Add:
+                    trace("run_plus");
+                    run_plus(term);
+                    break;
+                case BinaryOp::Sub:
+                    trace("run_minus");
+                    run_minus(term);
+                    break;
+                case BinaryOp::Mul:
+                    trace("run_times");
+                    run_times(term);
+                    break;
+                case BinaryOp::Div:
+                    trace("run_over");
+                    run_over(term);
+                    break;
+                case BinaryOp::Rem:
+                    trace("run_rem");
+                    run_rem(term);
+                    break;
+                case BinaryOp::Eq:
+                    trace("run_eq");
+                    run_eq(term);
+                    break;
+                case BinaryOp::Neq:
+                    trace("run_neq");
+                    run_neq(term);
+                    break;
+                case BinaryOp::Lt:
+                    trace("run_lt");
+                    run_lt(term);
+                    break;
+                case BinaryOp::Gt:
+                    trace("run_gt");
+                    run_gt(term);
+                    break;
+                case BinaryOp::Lte:
+                    trace("run_lte");
+                    run_lte(term);
+                    break;
+                case BinaryOp::Gte:
+                    trace("run_gte");
+                    run_gte(term);
+                    break;
+                case BinaryOp::And:
+                    trace("run_and");
+                    run_and(term);
+                    break;
+                case BinaryOp::Or:
+                    trace("run_or");
+                    run_or(term);
+                    break;
+                default:
+                    throw rinha_compiler::RinhaException("Operação binária inválida", term->location);
+                    break;
+            }
+        }
+}
 
 namespace rinha_compiler::interpreter {
 
@@ -13,6 +77,8 @@ namespace rinha_compiler::interpreter {
 
     template <class Visitor, class... Variants>
     constexpr Type visit(Visitor&& vis, Variants&&... vars);
+
+    
 
     void bin_op(box<Binary>& term){
         std::visit(rinha_compiler::walker::VisitTerm{}, term->lhs.terms.front());
