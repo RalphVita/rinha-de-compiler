@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
         File file = json_to_ast::parser(json_data);
 
 
-        interpreter::walk(file);
+        rinha_compiler::interpreter::walk(file);
     }
     catch(rinha_compiler::RinhaException &ex){
         std::cout << ex.message() << std::endl;

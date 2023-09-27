@@ -138,7 +138,7 @@ int main(int argc, char **argv ){
 void test_let_bool(File file){
     auto expected = "true\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
     
     assert(oss && oss.str() == expected);
 }
@@ -146,7 +146,7 @@ void test_let_bool(File file){
 void test_let_int(File file){
     auto expected = "1\n";
     
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
     
     assert(oss && oss.str() == expected);
 }
@@ -154,7 +154,7 @@ void test_let_int(File file){
 void test_let_str(File file){
     auto expected = "texto\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
     
     assert(oss && oss.str() == expected);
 }
@@ -162,7 +162,7 @@ void test_let_str(File file){
 void test_let_tuple(File file){
     auto expected = "(55, (Text, (true, false)))\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
     
     assert(oss && oss.str() == expected);
 }
@@ -170,7 +170,7 @@ void test_let_tuple(File file){
 void test_first_second(File file){
     auto expected = "(true, 1)\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
     
     assert(oss && oss.str() == expected);
 }
@@ -178,14 +178,14 @@ void test_first_second(File file){
 void test_if(File file){
     auto expected = "if\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
     
     assert(oss && oss.str() == expected);
 }
 void test_else(File file){
     auto expected = "else\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
     
     assert(oss && oss.str() == expected);
 }
@@ -193,21 +193,21 @@ void test_else(File file){
 void test_sum_print(File file){
     auto expected = "1\n2\n3\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
     
     assert(oss && oss.str() == expected);
 }
 void test_nested_print(File file){
     auto expected = "1\n2\n2\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
     
     assert(oss && oss.str() == expected);
 }
 void test_nested_print_tuple(File file){
     auto expected = "1\n2\n(1, 2)\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
     
     assert(oss && oss.str() == expected);
 }
@@ -215,147 +215,147 @@ void test_nested_print_tuple(File file){
 void test_args_print(File file){
     auto expected = "1\n2\n3\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
 
     assert(oss && oss.str() == expected);
 }
 void test_binary_op_add_number(File file){
     auto expected = "8\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
 
     assert(oss && oss.str() == expected);
 }
 void test_binary_op_add_number_string(File file){
     auto expected = "2a\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
 
     assert(oss && oss.str() == expected);
 }
 void test_binary_op_add_string(File file){
     auto expected = "ab\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
 
     assert(oss && oss.str() == expected);
 }
 void test_binary_op_add_string_number(File file){
     auto expected = "a2\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
 
     assert(oss && oss.str() == expected);
 }
 void test_binary_op_and(File file){
     auto expected = "false\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
 
     assert(oss && oss.str() == expected);
 }
 void test_binary_op_div_number(File file){
     auto expected = "1\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
 
     assert(oss && oss.str() == expected);
 }
 void test_binary_op_eq_bool(File file){
     auto expected = "true\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
 
     assert(oss && oss.str() == expected);
 }
 void test_binary_op_eq_number(File file){
     auto expected = "true\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
 
     assert(oss && oss.str() == expected);
 }
 void test_binary_op_eq_string(File file){
     auto expected = "true\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
 
     assert(oss && oss.str() == expected);
 }
 void test_binary_op_gt_number(File file){
     auto expected = "false\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
 
     assert(oss && oss.str() == expected);
 }
 void test_binary_op_gte_number(File file){
     auto expected = "false\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
 
     assert(oss && oss.str() == expected);
 }
 void test_binary_op_lt_number(File file){
     auto expected = "true\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
 
     assert(oss && oss.str() == expected);
 }
 void test_binary_op_lte_number(File file){
     auto expected = "true\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
 
     assert(oss && oss.str() == expected);
 }
 void test_binary_op_mul_number(File file){
     auto expected = "4\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
 
     assert(oss && oss.str() == expected);
 }
 void test_binary_op_neq_bool(File file){
     auto expected = "true\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
 
     assert(oss && oss.str() == expected);
 }
 void test_binary_op_neq_number(File file){
     auto expected = "true\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
 
     assert(oss && oss.str() == expected);
 }
 void test_binary_op_neq_string(File file){
     auto expected = "false\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
 
     assert(oss && oss.str() == expected);
 }
 void test_binary_op_or(File file){
     auto expected = "true\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
 
     assert(oss && oss.str() == expected);
 }
 void test_binary_op_rem_number(File file){
     auto expected = "0\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
 
     assert(oss && oss.str() == expected);
 }
 void test_binary_op_sub_number(File file){
     auto expected = "-1\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
 
     assert(oss && oss.str() == expected);
 }
@@ -364,28 +364,28 @@ void test_binary_op_sub_number(File file){
 void test_combination(File file){
     auto expected = "45\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
 
     assert(oss && oss.str() == expected);
 }
 void test_fib(File file){
     auto expected = "55\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
 
     assert(oss && oss.str() == expected);
 }
 void test_print(File file){
     auto expected = "Hello world\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
 
     assert(oss && oss.str() == expected);
 }
 void test_sum(File file){
     auto expected = "15\n";
 
-    interpreter::walk(file);
+    rinha_compiler::interpreter::walk(file);
 
     assert(oss && oss.str() == expected);
 }

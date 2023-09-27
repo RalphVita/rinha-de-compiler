@@ -2,6 +2,7 @@
 
 #ifndef WALKER_HPP
 #define WALKER_HPP
+namespace rinha_compiler::walker {
 
     void run_int(Int&);
     void run_str(Str&);
@@ -16,9 +17,6 @@
     void run_bool(Bool&);
     void run_tuple(box<Tuple>&);
     void run_var(box<Var>&);
-
-namespace walker {
-    //using Type = std::variant<int, bool, std::string>;
     
     struct VisitTerm {
         void operator()(Int& term){  trace("run_int");run_int(term);}
