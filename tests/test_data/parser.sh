@@ -1,19 +1,21 @@
 #!/bin/bash
-for source in ./*.rinha; do
+for source in ./aux/*.rinha; do
     filename="${source##*/}"
     filename="${filename%.*}"
-    echo "$filename".json
-    rinha $source >  "$filename".json
+    
+    ## Gerar AST
+    #echo "$filename".json
+    #rinha $source >  "$filename".json
 
     ## Chamada no CMakeList
-    #echo "add_test(NAME test_"$filename" COMMAND interpreter_test \"test_"$filename"\" \"\${CMAKE_SOURCE_DIR}/tests/test_data/"$filename".json\")"
+    echo "add_test(NAME test_"$filename" COMMAND interpreter_exception_test \"test_"$filename"\" \"\${CMAKE_SOURCE_DIR}/tests/test_data/"$filename".json\")"
     
     ## Declaração na classe
     #echo "void test_"$filename"(File);"
 
     ## Verificar qual teste chamar
-    #echo "else if(test_name == \"test_"$filename"\")"
-    #echo "    test_"$filename"(file);"
+    # echo "else if(test_name == \"test_"$filename"\")"
+    # echo "    test_"$filename"(file);"
 
 
     ## Método de assert

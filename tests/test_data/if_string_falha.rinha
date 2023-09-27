@@ -1,0 +1,10 @@
+let a = "if";
+let b = 2;
+let x = (
+if ("true") {
+  a
+} else {
+  b
+});
+
+print(x)
