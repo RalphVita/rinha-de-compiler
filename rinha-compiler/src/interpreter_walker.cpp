@@ -35,10 +35,11 @@ using namespace rinha_compiler::interpreter;
     }
 
     void run_call(box<Call>& term){
-        int arity = term->arguments.terms.size();
         int saved_scope = current_scope;
+
+        //Carrega argumentos na pilha
+        int arity = term->arguments.terms.size();
         if(arity > 0){
-            //Carrega argumentos na pilha
             for(auto arg: term->arguments.terms)
                 std::visit(walker::VisitTerm{}, arg);
         }
@@ -49,19 +50,28 @@ using namespace rinha_compiler::interpreter;
         if(!std::holds_alternative<std::string>(function_name))
             throw rinha_compiler::RinhaException("Nome de função inválido.", term->location);
         
+        //Recupera função da tabela de simbolos
         std::string id = std::get<std::string>(function_name);
         rinha_compiler::Symbol symbol = symbolTable->Get(id);
+        
+        //Muda de escopo
+        //A função sempre é salva com o espopo da parent. Então o novo escopo é:
         current_scope = symbol.scope + 1;
+
+        //Aloca mas espaço na memória, para o novo escopo
         _memory.increment(current_scope + 1);
+        //Cria página de memória
         _memory.push(current_scope);
         
-        //Busca e Aponta para o bloco da função na AST
+        //Busca e aponta para o bloco da função na AST
         auto let_function = std::get<box<Let>>(symbol.term);
 
-        //Varre a o bloco da função recursivamente
+        //Varre o bloco da função recursivamente
         std::visit(walker::VisitTerm{}, let_function->value.terms.front());
 
+        //Deleta página de memória
         _memory.pop(current_scope);
+
         current_scope = saved_scope;
     }
     void run_binary(box<Binary>& term){
@@ -149,23 +159,25 @@ using namespace rinha_compiler::interpreter;
         //current_scope--;
     }
 
+     void run_var_decl(box<Let>& term){
+        Term value = term->value.terms.front();
+        std::string id = term->name.text;
+        rinha_compiler::Symbol symbol = rinha_compiler::init_symbol(id, current_scope);
+
+        symbol = symbolTable->Put(id, symbol);
+
+        std::visit(walker::VisitTerm{}, value);
+        Type result = _stack.pop();
+
+        _memory.store(symbol, result);
+     }
+
     void run_let(box<Let>& term){
         Term value = term->value.terms.front();
-        if(std::holds_alternative<box<Function>>(value)){
+        if(std::holds_alternative<box<Function>>(value))
             run_function_decl(term);
-        }
-        else {
-            std::string id = term->name.text;
-            rinha_compiler::Symbol symbol = rinha_compiler::init_symbol(id, current_scope);
-
-            symbol = symbolTable->Put(id, symbol);
-            //symbol = symbolTable->Get(id);
-
-            std::visit(walker::VisitTerm{}, value);
-            Type result = _stack.pop();
-
-            _memory.store(symbol, result);
-        }
+        else
+            run_var_decl(term);
 
         std::visit(walker::VisitTerm{}, term->next.terms.front());
     }
