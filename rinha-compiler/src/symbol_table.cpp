@@ -3,8 +3,6 @@
 #include <stack>
 #include <interpreter.hpp>
 
-// extern std::stack<bool> function_out_scope_stack;
-// extern std::stack<std::string> function_name_stack;
 extern rinha_compiler::FunctionCache function_cache;
 namespace rinha_compiler{
 
@@ -32,8 +30,6 @@ namespace rinha_compiler{
             }
             
             function_cache.set_change_scope(id);
-            // if(id != function_name_stack.top())
-            //     function_out_scope_stack.top() = true;
         }
         throw rinha_compiler::RinhaException("Simbolo " + id + ", não encontrado na tabela de simbolos.");
     }

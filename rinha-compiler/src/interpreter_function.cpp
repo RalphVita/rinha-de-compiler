@@ -14,13 +14,7 @@ extern rinha_compiler::SymbolTable* symbolTable;
 extern int current_scope;
 rinha_compiler::FunctionCache function_cache;
 
-//std::stack<bool> function_out_scope_stack;
-//std::stack<std::string> function_name_stack;
 namespace rinha_compiler::walker {
-    //rinha_compiler::FunctionCache function_cache;
-    
-    
-
     std::string get_function_name(box<Call>&);
     void load_arguments_onto_stack(box<Call>&);
     void create_page_memory(int);
@@ -61,15 +55,11 @@ namespace rinha_compiler::walker {
 
         load_param_list_in_memory(term);
 
-        //CACHE
-        //function_cache.function_out_scope_stack.push(false);
-        //std::string  function_name = function_name_stack.top();
-        //function_cache.input_function(function_name);
         std::string hash = function_cache.hash_args();
         if(!function_cache.has_value(hash)){
+            //Executa bloco da função
             std::visit(walker::VisitTerm{}, term->value.terms.front());
-
-            //bool function_out_of_scope = function_out_scope_stack.top();
+            
             if(function_cache.function_can_have_cache()){
                 Type value = _stack.pop();
                 function_cache.set_value(hash, value);

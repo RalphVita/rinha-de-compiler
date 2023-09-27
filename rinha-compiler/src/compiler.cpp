@@ -1,8 +1,6 @@
 #include <compiler.hpp>
-//#include <walker.hpp>
 
 namespace rinha_compiler::compiler{
-    //using VisitTerm = struct _VisitTerm;
     void run_int(Int&);
     void run_str(Str&);
     void run_call(box<Call>&);

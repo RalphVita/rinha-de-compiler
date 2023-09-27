@@ -4,10 +4,6 @@
 #ifndef INTERPRETER_FUNCTION_HPP
 #define INTERPRETER_FUNCTION_HPP
 
-//extern std::stack<bool> function_out_scope_stack;
-//extern std::stack<std::string> function_name_stack;
-
-
 namespace rinha_compiler::walker {
     void load_param_list_in_memory(box<Function>&);
     void run_function_decl(box<Let>&);
