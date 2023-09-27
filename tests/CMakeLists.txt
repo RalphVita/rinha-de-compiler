@@ -58,3 +58,24 @@ add_test(NAME test_combination COMMAND interpreter_test "test_combination" "${CM
 add_test(NAME test_fib COMMAND interpreter_test "test_fib" "${CMAKE_SOURCE_DIR}/tests/test_data/fib.json")
 add_test(NAME test_print COMMAND interpreter_test "test_print" "${CMAKE_SOURCE_DIR}/tests/test_data/print.json")
 add_test(NAME test_sum COMMAND interpreter_test "test_sum" "${CMAKE_SOURCE_DIR}/tests/test_data/sum.json")
+add_test(NAME test_expresion COMMAND interpreter_test "test_expresion" "${CMAKE_SOURCE_DIR}/tests/test_data/expresion.json")
+
+
+##################################
+# interpreter_exception_test.cpp #
+##################################
+add_executable(interpreter_exception_test src/interpreter_exception_test.cpp )
+target_include_directories(interpreter_exception_test PUBLIC "${CMAKE_SOURCE_DIR}/rinha-compiler")
+target_link_libraries(interpreter_exception_test PUBLIC rinha-compiler )
+
+add_test(NAME test_binary_op_div_string_falha COMMAND interpreter_exception_test "test_binary_op_div_string_falha" "${CMAKE_SOURCE_DIR}/tests/test_data/binary_op_div_string_falha.json")
+add_test(NAME test_binary_op_eq_string_number_falha COMMAND interpreter_exception_test "test_binary_op_eq_string_number_falha" "${CMAKE_SOURCE_DIR}/tests/test_data/binary_op_eq_string_number_falha.json")
+add_test(NAME test_binary_op_neq_string_number_falha COMMAND interpreter_exception_test "test_binary_op_neq_string_number_falha" "${CMAKE_SOURCE_DIR}/tests/test_data/binary_op_neq_string_number_falha.json")
+add_test(NAME test_binary_op_sub_string_falha COMMAND interpreter_exception_test "test_binary_op_sub_string_falha" "${CMAKE_SOURCE_DIR}/tests/test_data/binary_op_sub_string_falha.json")
+add_test(NAME test_if_string_falha COMMAND interpreter_exception_test "test_if_string_falha" "${CMAKE_SOURCE_DIR}/tests/test_data/if_string_falha.json")
+add_test(NAME test_binary_and_string_falha COMMAND interpreter_exception_test "test_binary_and_string_falha" "${CMAKE_SOURCE_DIR}/tests/test_data/binary_and_string_falha.json")
+add_test(NAME test_binary_gt_string_falha COMMAND interpreter_exception_test "test_binary_gt_string_falha" "${CMAKE_SOURCE_DIR}/tests/test_data/binary_gt_string_falha.json")
+add_test(NAME test_binary_gte_string_falha COMMAND interpreter_exception_test "test_binary_gte_string_falha" "${CMAKE_SOURCE_DIR}/tests/test_data/binary_gte_string_falha.json")
+add_test(NAME test_binary_lt_string_falha COMMAND interpreter_exception_test "test_binary_lt_string_falha" "${CMAKE_SOURCE_DIR}/tests/test_data/binary_lt_string_falha.json")
+add_test(NAME test_binary_lte_string_falha COMMAND interpreter_exception_test "test_binary_lte_string_falha" "${CMAKE_SOURCE_DIR}/tests/test_data/binary_lte_string_falha.json")
+add_test(NAME test_binary_or_string_falha COMMAND interpreter_exception_test "test_binary_or_string_falha" "${CMAKE_SOURCE_DIR}/tests/test_data/binary_or_string_falha.json")

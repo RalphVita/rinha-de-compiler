@@ -43,6 +43,7 @@ void test_combination(File);
 void test_fib(File);
 void test_print(File);
 void test_sum(File);
+void test_expresion(File);
 
 int main(int argc, char **argv ){
 
@@ -129,6 +130,8 @@ int main(int argc, char **argv ){
         test_print(file);
     else if(test_name == "test_sum")
         test_sum(file);
+    else if(test_name == "test_expresion")
+        test_expresion(file);
 
     std::cout.rdbuf(p_cout_streambuf);
     
@@ -384,6 +387,13 @@ void test_print(File file){
 }
 void test_sum(File file){
     auto expected = "15\n";
+
+    rinha_compiler::interpreter::walk(file);
+
+    assert(oss && oss.str() == expected);
+}
+void test_expresion(File file){
+    auto expected = "10\n";
 
     rinha_compiler::interpreter::walk(file);
 
