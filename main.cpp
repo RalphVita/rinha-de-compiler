@@ -17,6 +17,7 @@
 
 int main(int argc, char **argv) {
     try{
+        //std::string path = "/mnt/c/WORKSPACE/source/RalphVita/rinha-de-compiler/source.rinha.json";
         std::string path = argv[1];
         auto json_data = *daw::read_file(path);
 

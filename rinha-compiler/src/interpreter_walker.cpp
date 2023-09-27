@@ -4,6 +4,7 @@
 #include <type.hpp>
 #include <interpreter_binary_operation.hpp>
 #include <interpreter_function.hpp>
+#include <stack>
 
 rinha_compiler::stack _stack;
 rinha_compiler::Memory _memory;
