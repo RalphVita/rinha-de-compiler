@@ -1,16 +1,21 @@
+#include <interpreter_function.hpp>
 #include <interpreter.hpp>
 #include <walker.hpp>
 #include <rinha_exception.hpp>
 #include <type.hpp>
-#include <interpreter_function.hpp>
+#include <stack>
+#include <function_cache.hpp>
+#include <box.hpp>
+#include <ast.hpp>
 
 extern rinha_compiler::stack _stack;
 extern rinha_compiler::Memory _memory;
 extern rinha_compiler::SymbolTable* symbolTable;
 extern int current_scope;
+rinha_compiler::FunctionCache function_cache;
 
 namespace rinha_compiler::walker {
-    rinha_compiler::Symbol get_symbol_function(box<Call>&);
+    std::string get_function_name(box<Call>&);
     void load_arguments_onto_stack(box<Call>&);
     void create_page_memory(int);
     void delete_page_memory(int);
@@ -20,7 +25,11 @@ namespace rinha_compiler::walker {
 
         load_arguments_onto_stack(term);
 
-        auto symbol = get_symbol_function(term);
+        std::string function_name = get_function_name(term);
+        rinha_compiler::Symbol symbol = symbolTable->Get(function_name);
+        
+        //Indica ao cache que vai entrar em nova função
+        function_cache.input_function(function_name);
         
         //Muda de escopo
         //A função sempre é salva com o espopo da parent. Então o novo escopo é:
@@ -42,9 +51,27 @@ namespace rinha_compiler::walker {
     void run_function(box<Function>& term){
         rinha_compiler::SymbolTable* symbol_table_function = new rinha_compiler::SymbolTable(symbolTable);
         symbolTable = symbol_table_function;
-        load_paran_list(term);
 
-        std::visit(walker::VisitTerm{}, term->value.terms.front());
+
+        load_param_list_in_memory(term);
+
+        std::string hash = function_cache.hash_args();
+        if(!function_cache.has_value(hash)){
+            //Executa bloco da função
+            std::visit(walker::VisitTerm{}, term->value.terms.front());
+            
+            if(function_cache.function_can_have_cache()){
+                Type value = _stack.pop();
+                function_cache.set_value(hash, value);
+                _stack.push(value);
+            }
+        }
+        else{
+            Type value = function_cache.get_value(hash);
+            _stack.push(value);
+        }
+        
+        function_cache.output_function();
 
         symbolTable = symbol_table_function->GetParent();
     }
@@ -52,18 +79,16 @@ namespace rinha_compiler::walker {
     void run_function_decl(box<Let>& term){
         std::string id = term->name.text;
         Term value = term->value.terms.front();
-        //current_scope++;
+
         _memory.increment(current_scope + 1);
 
         rinha_compiler::Symbol symbol = rinha_compiler::init_symbol(id, current_scope, term);
 
         symbol = symbolTable->Put(id, symbol);
         _memory.store(symbol, id);
-
-        //current_scope--;
     }
 
-    void load_paran_list(box<Function>& function){
+    void load_param_list_in_memory(box<Function>& function){
         auto parameters = function->parameters;
         for (int i = parameters.size() - 1; i >= 0; i--)
         {
@@ -74,10 +99,12 @@ namespace rinha_compiler::walker {
             symbol = symbolTable->Put(id, symbol);
 
             _memory.store(symbol, value);
+
+            function_cache.push_parameters(value);
         }
     }
 
-    rinha_compiler::Symbol get_symbol_function(box<Call>& term){
+    std::string get_function_name(box<Call>& term){
         //Recupera nome da função
         std::visit(walker::VisitTerm{}, term->callee.terms.front());
         Type function_name = _stack.pop();
@@ -86,9 +113,7 @@ namespace rinha_compiler::walker {
         
         //Recupera função da tabela de simbolos
         std::string id = std::get<std::string>(function_name);
-        rinha_compiler::Symbol symbol = symbolTable->Get(id);
-
-        return symbol;
+        return id;
     }
 
     void load_arguments_onto_stack(box<Call>& term){

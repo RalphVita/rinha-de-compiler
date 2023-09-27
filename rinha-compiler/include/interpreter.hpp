@@ -5,6 +5,7 @@
 #include <stack.hpp>
 #include <memory.hpp>
 #include <symbol_table.hpp>
+#include <function_cache.hpp>
 
 extern rinha_compiler::stack _stack;
 extern rinha_compiler::Memory _memory;
