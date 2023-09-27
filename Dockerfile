@@ -6,7 +6,7 @@ RUN apt update && \
 WORKDIR /rinha-compiler
 COPY . /rinha-compiler
 WORKDIR /rinha-compiler/build
-#RUN cmake ..  && \
-#    make
+RUN cmake ..  && \
+   make
 
-#ENTRYPOINT ["./main", "/var/rinha/source.rinha.json"]
+ENTRYPOINT ["./main", "/var/rinha/source.rinha.json"]
