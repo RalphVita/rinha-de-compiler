@@ -17,6 +17,10 @@ namespace rinha_compiler{
     }
 
     void Memory::store(int scope, int addr, Type value){
+            //Aloca espaço, caso não tenha o sufuciente
+            if(men[scope].top().size() <= addr)
+                men[scope].top().resize(addr + 3);
+
             men[scope].top()[addr] = value;
     }
 
@@ -29,7 +33,7 @@ namespace rinha_compiler{
     }
 
     void Memory::push(int scope){
-        std::vector<Type> vt(1000);//TODO: Aumentar a medida que for preciso
+        std::vector<Type> vt(3);//TODO: Retornar endereço, em vez de tamanho fixo.
         men[scope].push(vt);
     }
     void Memory::pop(int scope){
