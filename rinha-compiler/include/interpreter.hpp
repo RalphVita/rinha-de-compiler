@@ -9,7 +9,7 @@
 
 extern rinha_compiler::stack _stack;
 extern rinha_compiler::Memory _memory;
-extern rinha_compiler::SymbolTable* symbolTable;
+extern rinha_compiler::SymbolTable* variable_symbol_table;
 extern int current_scope;
 
 namespace rinha_compiler::interpreter {
