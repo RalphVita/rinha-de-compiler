@@ -295,8 +295,7 @@ struct _BoxTermMaker{
                                 else if(kind == "Var")
                                   term = from_json<Var>( jv );
                                 else{
-                                  std::cout << "Kind Invalido TODO" << std::endl;
-                                  std::terminate();
+                                  throw rinha_compiler::RinhaException("Kind inválido: " +kind);
                                 }
 
                                 return term;
