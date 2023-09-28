@@ -1,0 +1,9 @@
+let sum = fn (n,x) => {
+  if (n == 1) {
+    n
+  } else {
+    n + sum(n - 1)
+  }
+};
+let x = (sum(100), ("teste", (true,( 1 + 2, sum(15)))));
+print ((x, print(x)))

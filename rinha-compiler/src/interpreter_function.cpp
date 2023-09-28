@@ -90,6 +90,12 @@ namespace rinha_compiler::walker {
 
     void load_param_list_in_memory(box<Function>& function){
         auto parameters = function->parameters;
+
+        Type arity = _stack.pop();
+        int _arity = std::get<int>(arity);
+        if(_arity != parameters.size())
+            throw rinha_compiler::RinhaException("Quantidade de parâmetros esperados:" + std::to_string(_arity) +", recebidos: "+ std::to_string(parameters.size()), function->location);
+
         for (int i = parameters.size() - 1; i >= 0; i--)
         {
             Type value = _stack.pop();
@@ -122,6 +128,7 @@ namespace rinha_compiler::walker {
             for(auto arg: term->arguments.terms)
                 std::visit(walker::VisitTerm{}, arg);
         }
+        _stack.push(arity);
     }
 
     void create_page_memory(int current_scope){
