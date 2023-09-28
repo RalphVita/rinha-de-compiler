@@ -23,9 +23,9 @@ make test
 ## Docker
 ```shell
 docker build .
-docker run -v {folder}:/var/rinha/ --memory=2gb --cpus=2 nome_da_imagem
+docker run -v $(pwd):/var/rinha/ --memory=2gb --cpus=2 nome_da_imagem
 ```
-Espera que em *{folder}*, tenha um arquivo *source.rinha.json*, que será interpretado. 
+Espera-se que em *$(pwd)*, tenha um arquivo *source.rinha.json*, que será interpretado. 
 
 ## Habilitar Trace
 Habilitar trace para 'debug'.
