@@ -60,6 +60,10 @@ add_test(NAME test_print COMMAND interpreter_test "test_print" "${CMAKE_SOURCE_D
 add_test(NAME test_sum COMMAND interpreter_test "test_sum" "${CMAKE_SOURCE_DIR}/tests/test_data/sum.json")
 add_test(NAME test_expresion COMMAND interpreter_test "test_expresion" "${CMAKE_SOURCE_DIR}/tests/test_data/expresion.json")
 
+add_test(NAME test_closure_returned_with_param COMMAND interpreter_test "test_closure_returned_with_param" "${CMAKE_SOURCE_DIR}/tests/test_data/closure_returned_with_param.json")
+add_test(NAME test_closure_returned_without_param COMMAND interpreter_test "test_closure_returned_without_param" "${CMAKE_SOURCE_DIR}/tests/test_data/closure_returned_without_param.json")
+add_test(NAME test_closure_simple_with_param COMMAND interpreter_test "test_closure_simple_with_param" "${CMAKE_SOURCE_DIR}/tests/test_data/closure_simple_with_param.json")
+add_test(NAME test_closure_simple_without_param COMMAND interpreter_test "test_closure_simple_without_param" "${CMAKE_SOURCE_DIR}/tests/test_data/closure_simple_without_param.json")
 
 ##################################
 # interpreter_exception_test.cpp #

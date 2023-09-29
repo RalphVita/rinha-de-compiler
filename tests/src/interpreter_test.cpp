@@ -45,6 +45,11 @@ void test_print(File);
 void test_sum(File);
 void test_expresion(File);
 
+void test_closure_returned_with_param(File);
+void test_closure_returned_without_param(File);
+void test_closure_simple_with_param(File);
+void test_closure_simple_without_param(File);
+
 int main(int argc, char **argv ){
 
     
@@ -132,6 +137,15 @@ int main(int argc, char **argv ){
         test_sum(file);
     else if(test_name == "test_expresion")
         test_expresion(file);
+
+    else if(test_name == "test_closure_returned_with_param")
+        test_closure_returned_with_param(file);
+    else if(test_name == "test_closure_returned_without_param")
+        test_closure_returned_without_param(file);
+    else if(test_name == "test_closure_simple_with_param")
+        test_closure_simple_with_param(file);
+    else if(test_name == "test_closure_simple_without_param")
+        test_closure_simple_without_param(file);
 
     std::cout.rdbuf(p_cout_streambuf);
     
@@ -393,6 +407,35 @@ void test_sum(File file){
     assert(oss && oss.str() == expected);
 }
 void test_expresion(File file){
+    auto expected = "10\n";
+
+    rinha_compiler::interpreter::walk(file);
+
+    assert(oss && oss.str() == expected);
+}
+
+void test_closure_returned_with_param(File file){
+    auto expected = "50\n";
+
+    rinha_compiler::interpreter::walk(file);
+
+    assert(oss && oss.str() == expected);
+}
+void test_closure_returned_without_param(File file){
+    auto expected = "11\n";
+
+    rinha_compiler::interpreter::walk(file);
+
+    assert(oss && oss.str() == expected);
+}
+void test_closure_simple_with_param(File file){
+    auto expected = "10\n";
+
+    rinha_compiler::interpreter::walk(file);
+
+    assert(oss && oss.str() == expected);
+}
+void test_closure_simple_without_param(File file){
     auto expected = "10\n";
 
     rinha_compiler::interpreter::walk(file);

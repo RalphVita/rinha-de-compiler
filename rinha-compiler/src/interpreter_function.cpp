@@ -18,16 +18,29 @@ namespace rinha_compiler::walker {
     void load_arguments_onto_stack(box<Call>&);
     void create_page_memory(int);
     void delete_page_memory(int);
-    box<tupla> get_function_callee(box<Call>&);
+    Type get_function_callee(box<Call>&);
     Term get_function_pointer(box<tupla>&);
     std::string get_function_name(box<tupla>&);
+
+    void run_function(box<Function>&);
 
     void run_call(box<Call>& term){
         int saved_scope = current_scope;
 
         load_arguments_onto_stack(term);
 
-        box<tupla> function_name_pointer = get_function_callee(term);
+        Type function_callee = get_function_callee(term);
+
+        if(!std::holds_alternative<box<tupla>>(function_callee))
+        {
+            _stack.push(function_callee);
+            return;
+        }
+        //     throw rinha_compiler::RinhaException("Nome de função inválido.", term->location);
+        
+        // return std::get<box<tupla>>(function_name_point);
+        auto function_name_pointer = std::get<box<tupla>>(function_callee);
+
         std::string function_name = get_function_name(function_name_pointer);
         Term function_pointer = get_function_pointer(function_name_pointer);
 
@@ -51,6 +64,42 @@ namespace rinha_compiler::walker {
         delete_page_memory(current_scope);
 
         current_scope = saved_scope;
+    }
+
+    void run_closure(box<Function>& term){
+        int saved_scope = current_scope;
+        rinha_compiler::SymbolTable* symbol_table_function = new rinha_compiler::SymbolTable(variable_symbol_table);
+        variable_symbol_table = symbol_table_function;
+        
+        //Muda de escopo
+        //A função sempre é salva com o espopo da parent. Então o novo escopo é:
+        current_scope++;
+
+        create_page_memory(current_scope);
+
+
+        load_param_list_in_memory(term);
+        // auto parameters = term->parameters;
+        // for (int i = parameters.size() - 1; i >= 0; i--)
+        // {
+        //     Type value = _stack.pop();
+        //     std::string id = parameters[i].text;
+        //     rinha_compiler::Symbol symbol = rinha_compiler::init_symbol(id, current_scope);
+
+        //     symbol = variable_symbol_table->Put(id, symbol);
+
+        //     _memory.store(symbol, value);
+        // }
+
+        std::visit(walker::VisitTerm{}, term->value.terms.front());
+
+
+        delete_page_memory(current_scope);
+
+        current_scope = saved_scope;
+
+
+        variable_symbol_table = symbol_table_function->GetParent();
     }
 
     void run_function(box<Function>& term){
@@ -118,15 +167,16 @@ namespace rinha_compiler::walker {
         }
     }
     
-    box<tupla> get_function_callee(box<Call>& term){
+    Type get_function_callee(box<Call>& term){
         //Recupera informações da função, da memória
         std::visit(walker::VisitTerm{}, term->callee.terms.front());
         Type function_name_point = _stack.pop();
 
-        if(!std::holds_alternative<box<tupla>>(function_name_point))
-            throw rinha_compiler::RinhaException("Nome de função inválido.", term->location);
+        // if(!std::holds_alternative<box<tupla>>(function_name_point))
+        //     throw rinha_compiler::RinhaException("Nome de função inválido.", term->location);
         
-        return std::get<box<tupla>>(function_name_point);
+        // return std::get<box<tupla>>(function_name_point);
+        return function_name_point;
     }
 
     std::string get_function_name(box<tupla>& function_name_pointer){

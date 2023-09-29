@@ -1,0 +1,2 @@
+let y = fn() => {let x = 10;(fn (z) => x*z)};
+print(y()(5))

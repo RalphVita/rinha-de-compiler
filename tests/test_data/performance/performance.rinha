@@ -15,6 +15,16 @@ let fib2 = fn (n) => {
   }
 };
 
-let fibs = (fib(46), (fib(46),fib2(20)));
+let sum = fn (n) => {
+  if (n == 1) {
+    n
+  } else {
+    n + sum(n - 1)
+  }
+};
+let sums = (sum(100), ("teste", (true,( 1 + 2, sum(15)))));
 
-print(fibs)
+
+let fibs = (fib(46), (fib(46),(sums,fib2(20))));
+
+print((fibs, print(second(fibs))))
