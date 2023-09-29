@@ -54,15 +54,20 @@ namespace rinha_compiler::walker {
         current_scope = symbol.scope + 1;
 
         create_page_memory(current_scope);
-        
-        //Aponta para o bloco da função na AST
-        auto let_function = std::get<box<Let>>(function_pointer);
 
-        //Varre o bloco da função recursivamente
-        if(std::holds_alternative<box<Function>>(let_function->value.terms.front()))
-            run_function(std::get<box<Function>>(let_function->value.terms.front()));
-        else
-            std::visit(walker::VisitTerm{}, let_function->value.terms.front());
+        if(std::holds_alternative<box<Function>>(function_pointer)){
+            run_closure(std::get<box<Function>>(function_pointer));
+        }else{
+        
+            //Aponta para o bloco da função na AST
+            auto let_function = std::get<box<Let>>(function_pointer);
+
+            //Varre o bloco da função recursivamente
+            if(std::holds_alternative<box<Function>>(let_function->value.terms.front()))
+                run_function(std::get<box<Function>>(let_function->value.terms.front()));
+            else
+                std::visit(walker::VisitTerm{}, let_function->value.terms.front());
+        }
 
         delete_page_memory(current_scope);
 
@@ -192,11 +197,30 @@ namespace rinha_compiler::walker {
         return term;
     }
 
+    void run_closure_decl(box<Function>& term){
+        std::string id = "_CLOSURE_ARG_";//term->name.text;
+        //Term value = term->value.terms.front();
+
+        _memory.increment(current_scope + 1);
+
+        rinha_compiler::Symbol symbol = rinha_compiler::init_symbol(id, current_scope, term);
+
+        symbol = variable_symbol_table->Put(id, symbol);
+
+        //Armazena na memória uma tupla com ('nome da função', 'ponteiro pra função na AST')
+        tupla function_name_point(std::make_tuple(id, term));
+        _memory.store(symbol, function_name_point);
+        _stack.push(function_name_point);
+    }
+
     void load_arguments_onto_stack(box<Call>& term){
         int arity = term->arguments.terms.size();
         if(arity > 0){
             for(auto arg: term->arguments.terms)
-                std::visit(walker::VisitTerm{}, arg);
+                if(std::holds_alternative<box<Function>>(arg))
+                    run_closure_decl(std::get<box<Function>>(arg));
+                else
+                    std::visit(walker::VisitTerm{}, arg);
         }
         _stack.push(arity);
     }

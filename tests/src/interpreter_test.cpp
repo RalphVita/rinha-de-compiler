@@ -50,6 +50,12 @@ void test_closure_returned_without_param(File);
 void test_closure_simple_with_param(File);
 void test_closure_simple_without_param(File);
 
+void test_closure_as_param(File);
+void test_closure_as_param_with_param(File);
+
+void test_fib_46(File);
+void test_fib_5_print(File);
+
 int main(int argc, char **argv ){
 
     
@@ -146,6 +152,16 @@ int main(int argc, char **argv ){
         test_closure_simple_with_param(file);
     else if(test_name == "test_closure_simple_without_param")
         test_closure_simple_without_param(file);
+    
+    else if(test_name == "test_closure_as_param")
+    test_closure_as_param(file);
+    else if(test_name == "test_closure_as_param_with_param")
+        test_closure_as_param_with_param(file);
+
+    else if(test_name == "test_fib_46")
+        test_fib_46(file);
+    else if(test_name == "test_fib_5_print")
+        test_fib_5_print(file);
 
     std::cout.rdbuf(p_cout_streambuf);
     
@@ -437,6 +453,35 @@ void test_closure_simple_with_param(File file){
 }
 void test_closure_simple_without_param(File file){
     auto expected = "10\n";
+
+    rinha_compiler::interpreter::walk(file);
+
+    assert(oss && oss.str() == expected);
+}
+
+void test_closure_as_param(File file){
+    auto expected = "10\n";
+
+    rinha_compiler::interpreter::walk(file);
+
+    assert(oss && oss.str() == expected);
+}
+void test_closure_as_param_with_param(File file){
+    auto expected = "70\n";
+
+    rinha_compiler::interpreter::walk(file);
+
+    assert(oss && oss.str() == expected);
+}
+void test_fib_46(File file){
+    auto expected = "1836311903\n";
+
+    rinha_compiler::interpreter::walk(file);
+
+    assert(oss && oss.str() == expected);
+}
+void test_fib_5_print(File file){
+    auto expected = "1\n0\n1\n1\n2\n1\n0\n1\n3\n1\n0\n1\n1\n2\n5\n5\n";
 
     rinha_compiler::interpreter::walk(file);
 

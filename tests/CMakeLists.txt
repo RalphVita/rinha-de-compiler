@@ -64,6 +64,11 @@ add_test(NAME test_closure_returned_with_param COMMAND interpreter_test "test_cl
 add_test(NAME test_closure_returned_without_param COMMAND interpreter_test "test_closure_returned_without_param" "${CMAKE_SOURCE_DIR}/tests/test_data/closure_returned_without_param.json")
 add_test(NAME test_closure_simple_with_param COMMAND interpreter_test "test_closure_simple_with_param" "${CMAKE_SOURCE_DIR}/tests/test_data/closure_simple_with_param.json")
 add_test(NAME test_closure_simple_without_param COMMAND interpreter_test "test_closure_simple_without_param" "${CMAKE_SOURCE_DIR}/tests/test_data/closure_simple_without_param.json")
+add_test(NAME test_closure_as_param COMMAND interpreter_test "test_closure_as_param" "${CMAKE_SOURCE_DIR}/tests/test_data/closure_as_param.json")
+add_test(NAME test_closure_as_param_with_param COMMAND interpreter_test "test_closure_as_param_with_param" "${CMAKE_SOURCE_DIR}/tests/test_data/closure_as_param_with_param.json")
+
+add_test(NAME test_fib_46 COMMAND interpreter_test "test_fib_46" "${CMAKE_SOURCE_DIR}/tests/test_data/fib_46.json")
+add_test(NAME test_fib_5_print COMMAND interpreter_test "test_fib_5_print" "${CMAKE_SOURCE_DIR}/tests/test_data/fib_5_print.json")
 
 ##################################
 # interpreter_exception_test.cpp #
