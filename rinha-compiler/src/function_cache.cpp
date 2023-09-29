@@ -49,6 +49,7 @@ namespace rinha_compiler {
                 y +=  ", "; 
                 y +=  std::visit(*this, std::get<1>(x->value));
                 y +=  ")";
+                return y;
             }
             std::string operator()(Term &x){
                 //throw rinha_compiler::RinhaException("Tipo de argumento inválido para hash_args.");
