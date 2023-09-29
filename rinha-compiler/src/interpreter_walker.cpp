@@ -11,6 +11,7 @@ rinha_compiler::Memory _memory;
 rinha_compiler::SymbolTable* variable_symbol_table;
 int current_scope;
 
+extern rinha_compiler::FunctionCache function_cache;
 namespace rinha_compiler::walker {
 
 using namespace rinha_compiler::interpreter;
@@ -57,6 +58,7 @@ using namespace rinha_compiler::interpreter;
     }
 
     void run_print(box<Print>& term){
+        function_cache.set_change_scope("Print");
         std::visit(walker::VisitTerm{}, term->value.terms.front());
         Type value = _stack.pop();
 
