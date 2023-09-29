@@ -15,8 +15,13 @@ namespace rinha_compiler {
         function_name_stack.push(function_name);
     }
     void FunctionCache::output_function(){
+        bool child_can_have_cache = this->function_can_have_cache();
         function_out_scope_stack.pop();
         function_name_stack.pop();
+
+        //Se função dum escopo mais sai do escpo, o mais externo também sai, e não pode ser cacheado.
+        if(!child_can_have_cache)
+            function_out_scope_stack.top() = true;
     }
 
     bool FunctionCache::function_can_have_cache(){
