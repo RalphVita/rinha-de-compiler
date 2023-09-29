@@ -12,6 +12,7 @@ namespace rinha_compiler {
         std::string id;
         int scope;
         int index;
+        bool is_function;
         Term term;
     };
     

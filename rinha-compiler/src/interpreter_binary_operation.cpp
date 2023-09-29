@@ -118,6 +118,34 @@ namespace rinha_compiler::interpreter {
                 throw rinha_compiler::RinhaException("Tipos inválidos para operação binária SUM", term->location);
                 return false;
             }
+            Type operator()(box<tupla> &l, Term &r){
+                throw rinha_compiler::RinhaException("Tipos inválidos para operação binária SUM", term->location);
+                return false;
+            }
+            Type operator()(Term &l, box<tupla> &r){
+                throw rinha_compiler::RinhaException("Tipos inválidos para operação binária SUM", term->location);
+                return false;
+            }
+            Type operator()(Term &l, Term &r){
+                throw rinha_compiler::RinhaException("Tipos inválidos para operação binária SUM", term->location);
+                return false;
+            }
+            Type operator()(std::string l, Term &r){
+                throw rinha_compiler::RinhaException("Tipos inválidos para operação binária SUM", term->location);
+                return false;
+            }
+            Type operator()(int l, Term &r){
+                throw rinha_compiler::RinhaException("Tipos inválidos para operação binária SUM", term->location);
+                return false;
+            }
+            Type operator()(Term &l, std::string r){
+                throw rinha_compiler::RinhaException("Tipos inválidos para operação binária SUM", term->location);
+                return false;
+            }
+            Type operator()(Term &l, int r){
+                throw rinha_compiler::RinhaException("Tipos inválidos para operação binária SUM", term->location);
+                return false;
+            }
             box<Binary> &term;
         };
 

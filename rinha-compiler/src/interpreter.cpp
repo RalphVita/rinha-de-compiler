@@ -18,7 +18,7 @@ namespace rinha_compiler::interpreter {
         current_scope = 0;
         _memory.increment(current_scope + 1);
         _memory.push(current_scope);
-        symbolTable = new rinha_compiler::SymbolTable();
+        variable_symbol_table = new rinha_compiler::SymbolTable();
         std::visit(walker::VisitTerm{}, file.expression.terms.front());
     }
 }

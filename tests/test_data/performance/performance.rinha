@@ -1,0 +1,30 @@
+let fib = fn (n) => {
+  if (n < 2) {
+    n
+  } else {
+    fib(n - 1) + fib(n - 2)
+  }
+};
+let x = 0;
+let fib2 = fn (n) => {
+  let a = x;
+  if (n < 2) {
+    n
+  } else {
+    fib2(n - 1) + fib2(n - 2)
+  }
+};
+
+let sum = fn (n) => {
+  if (n == 1) {
+    n
+  } else {
+    n + sum(n - 1)
+  }
+};
+let sums = (sum(100), ("teste", (true,( 1 + 2, sum(15)))));
+
+
+let fibs = (fib(46), (fib(46),(sums,fib2(20))));
+
+print((fibs, print(second(fibs))))

@@ -1,6 +1,7 @@
 #include <function_cache.hpp>
 #include <rinha_exception.hpp>
 #include <type.hpp>
+#include <ast.hpp>
 #include <stack>
 
 namespace rinha_compiler {
@@ -43,6 +44,10 @@ namespace rinha_compiler {
                 y +=  ", "; 
                 y +=  std::visit(*this, std::get<1>(x->value));
                 y +=  ")";
+            }
+            std::string operator()(Term &x){
+                throw rinha_compiler::RinhaException("Tipo de argumento inválido para hash_args.");
+                return "";
             }
         };
 

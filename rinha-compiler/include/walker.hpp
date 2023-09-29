@@ -8,7 +8,8 @@ namespace rinha_compiler::walker {
     void run_str(Str&);
     void run_call(box<Call>&);
     void run_binary(box<Binary>&);
-    void run_function(box<Function>&);
+    //void run_function(box<Function>&);
+    void run_closure(box<Function>&);
     void run_let(box<Let>&);
     void run_if(box<If>&);
     void run_print(box<Print>&);
@@ -23,7 +24,8 @@ namespace rinha_compiler::walker {
         void operator()(Str& term){  trace("run_str");run_str(term);}
         void operator()(box<Call>& term){  trace("run_call");run_call(term);}
         void operator()(box<Binary>& term){  trace("run_binary");run_binary(term);}
-        void operator()(box<Function>& term){  trace("run_function");run_function(term);}
+        //void operator()(box<Function>& term){  trace("run_function");run_function(term);}
+        void operator()(box<Function>& term){  trace("run_closure");run_closure(term);}
         void operator()(box<Let>& term){  trace("run_let");run_let(term);}
         void operator()(box<If>& term){  trace("run_if");run_if(term);}
         void operator()(box<Print>& term){  trace("run_print");run_print(term);}

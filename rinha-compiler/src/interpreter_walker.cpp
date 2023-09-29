@@ -8,7 +8,7 @@
 
 rinha_compiler::stack _stack;
 rinha_compiler::Memory _memory;
-rinha_compiler::SymbolTable* symbolTable;
+rinha_compiler::SymbolTable* variable_symbol_table;
 int current_scope;
 
 namespace rinha_compiler::walker {
@@ -27,7 +27,7 @@ using namespace rinha_compiler::interpreter;
         std::string id = term->name.text;
         rinha_compiler::Symbol symbol = rinha_compiler::init_symbol(id, current_scope);
 
-        symbol = symbolTable->Put(id, symbol);
+        symbol = variable_symbol_table->Put(id, symbol);
 
         std::visit(walker::VisitTerm{}, value);
         Type result = _stack.pop();
@@ -71,6 +71,9 @@ using namespace rinha_compiler::interpreter;
                 std::cout << ", "; 
                 std::visit(*this, std::get<1>(x->value));
                 std::cout << ")";
+            }
+            void operator()(Term &x){
+                throw rinha_compiler::RinhaException("Váriavel inválida para Print.");
             }
         };
         
@@ -120,7 +123,10 @@ using namespace rinha_compiler::interpreter;
     void run_var(box<Var>& term){
         std::string id = term->text;
         trace(id);
-        rinha_compiler::Symbol symbol = symbolTable->Get(id);
+        rinha_compiler::Symbol symbol = variable_symbol_table->Get(id);
+        //if(symbol.is_function)
+        //    throw rinha_compiler::RinhaException("Simbolo " + id + ", não encontrado na tabela de simbolos.", term->location);
+
         trace(id);
         Type value = _memory.load(symbol);
 
