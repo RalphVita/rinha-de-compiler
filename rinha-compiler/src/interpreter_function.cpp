@@ -59,7 +59,10 @@ namespace rinha_compiler::walker {
         auto let_function = std::get<box<Let>>(function_pointer);
 
         //Varre o bloco da função recursivamente
-        std::visit(walker::VisitTerm{}, let_function->value.terms.front());
+        if(std::holds_alternative<box<Function>>(let_function->value.terms.front()))
+            run_function(std::get<box<Function>>(let_function->value.terms.front()));
+        else
+            std::visit(walker::VisitTerm{}, let_function->value.terms.front());
 
         delete_page_memory(current_scope);
 
