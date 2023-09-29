@@ -49,18 +49,22 @@ namespace rinha_compiler {
                 y +=  ", "; 
                 y +=  std::visit(*this, std::get<1>(x->value));
                 y +=  ")";
+                return y;
             }
             std::string operator()(Term &x){
-                throw rinha_compiler::RinhaException("Tipo de argumento inválido para hash_args.");
-                return "";
+                //throw rinha_compiler::RinhaException("Tipo de argumento inválido para hash_args.");
+                return "CLOSURE";
             }
         };
 
         std::string hash = "";
         for (int i = count_parameters - 1; i >= 0; i--){
-            hash += std::visit(to_string_visit{}, parameters.top());
+            std::string result = std::visit(to_string_visit{}, parameters.top());
+            hash += "_" + result;
             parameters.pop();
             count_parameters--;
+            if(result == "CLOSURE")
+                this->set_change_scope("CLOSURE");
         }
         return hash;
     }

@@ -1,0 +1,5 @@
+let x = fn (n) => {
+    let v = n();
+	v
+};
+print(x(fn () => 10))
